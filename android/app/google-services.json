@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "562807053048",
+    "project_id": "seba-732c9",
+    "storage_bucket": "seba-732c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562807053048:android:735eee29fea2c6cd8bf90d",
+        "android_client_info": {
+          "package_name": "com.example.seba_app1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWlpFDJmLbzWn2h82KqiBjPBHcLICIiE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562807053048:android:8854361a51b7191d8bf90d",
+        "android_client_info": {
+          "package_name": "com.meass.shebaadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWlpFDJmLbzWn2h82KqiBjPBHcLICIiE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
