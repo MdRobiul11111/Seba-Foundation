@@ -17,20 +17,29 @@ class SmsNotifier extends StateNotifier<SmsState> {
   final Ref ref;
   SmsNotifier(this.ref) : super(SmsState.initial());
 
-  Future<void> sendOtp(String phoneNumber) async {
+  Future<bool> sendOtp(String phoneNumber) async {
     final smsRepo = await ref.watch(smsRepoProvider.future);
     final otp = await smsRepo.sendSms(phone: phoneNumber);
     if (otp != null) {
       state = otp;
+      return true;
+    } else {
+      return false;
     }
   }
 
-  void verifyOtp(String otp) {
+  Future<bool> verifyOtp(String otp) async {
     final time = DateTime.now().difference(state.createdAt).inSeconds;
     if (state.otp == otp && time < 120) {
-      state = state.copyWith(isVarified: true);
+      state = state.copyWith(isVarified: true, isExpired: false);
+      return true;
     } else {
-      state = state.copyWith(isVarified: false);
+      if (time > 120) {
+        state = state.copyWith(isVarified: false, isExpired: true);
+      } else {
+        state = state.copyWith(isVarified: false);
+      }
+      return false;
     }
   }
 }

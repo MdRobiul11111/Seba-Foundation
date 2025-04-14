@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiPath {
-  static var smsBaseUrl = dotenv.env['BASE_URL'] ?? "";
+  static var smsBaseUrl = dotenv.env['SMS_SERVER_URL'] ?? "";
 
   //sms api
   static var smsApiKey = dotenv.env['SMS_API_KEY'] ?? "";
@@ -9,5 +9,5 @@ class ApiPath {
   static var smsType = dotenv.env['SMS_TYPE'] ?? "";
   static var smsAcode = dotenv.env['SMS_ACCOUNT_CODE'] ?? "";
 
-  static const String sendSms = "SMS_TYPE";
+  static const String sendSms = "/onetomany";
 }

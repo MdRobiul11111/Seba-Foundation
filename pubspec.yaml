@@ -63,6 +63,7 @@ dependencies:
   dio_cache_interceptor: ^4.0.3
   talker_dio_logger: ^4.7.1
   equatable: ^2.0.7
+  flutter_timer_countdown: ^1.0.7
 
 dev_dependencies:
   flutter_test:

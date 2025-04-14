@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 import 'package:seba_app1/application/auth/sms/sms_state.dart';
 import 'package:seba_app1/application/core/api_path.dart';
 import 'package:seba_app1/domain/auth/sms/i_sms_repo.dart';
@@ -19,9 +20,9 @@ class SmsRepo extends ISmsRepo {
     final otp = generatePin();
     try {
       final smsModel = SmsModel(
-          contacts: phone,
+          contacts: '88$phone',
           acode: ApiPath.smsAcode,
-          senderId: ApiPath.smsSenderId,
+          senderId: '8809610935222',
           apiKey: ApiPath.smsApiKey,
           type: ApiPath.smsType,
           msg:
@@ -39,11 +40,15 @@ class SmsRepo extends ISmsRepo {
       //   "pin": otp,
       //   "createdAt": DateTime.now(),
       // });
-      return SmsState(otp: otp, isVarified: false, createdAt: DateTime.now());
+      return SmsState(
+          otp: otp,
+          isVarified: false,
+          createdAt: DateTime.now(),
+          isExpired: false);
     } on DioException catch (e) {
       final message =
           e.response?.data["response"]["message"] ?? "Unknown error";
-
+      Logger().e(message);
       return null;
     }
   }

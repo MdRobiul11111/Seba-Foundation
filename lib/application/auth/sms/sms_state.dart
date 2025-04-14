@@ -6,21 +6,25 @@ class SmsState extends Equatable {
   final String otp;
   final bool isVarified;
   final DateTime createdAt;
+  final bool isExpired;
   const SmsState({
     required this.otp,
     required this.isVarified,
     required this.createdAt,
+    required this.isExpired,
   });
 
   SmsState copyWith({
     String? otp,
     bool? isVarified,
     DateTime? createdAt,
+    bool? isExpired,
   }) {
     return SmsState(
       otp: otp ?? this.otp,
       isVarified: isVarified ?? this.isVarified,
       createdAt: createdAt ?? this.createdAt,
+      isExpired: isExpired ?? this.isExpired,
     );
   }
 
@@ -29,6 +33,7 @@ class SmsState extends Equatable {
       'otp': otp,
       'isVarified': isVarified,
       'createdAt': createdAt.millisecondsSinceEpoch,
+      'isExpired': isExpired,
     };
   }
 
@@ -37,6 +42,7 @@ class SmsState extends Equatable {
       otp: map['otp'] ?? '',
       isVarified: map['isVarified'] ?? false,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+      isExpired: map['isExpired'] ?? false,
     );
   }
 
@@ -46,17 +52,18 @@ class SmsState extends Equatable {
       SmsState.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'SmsState(otp: $otp, isVarified: $isVarified, createdAt: $createdAt)';
+  String toString() {
+    return 'SmsState(otp: $otp, isVarified: $isVarified, createdAt: $createdAt, isExpired: $isExpired)';
+  }
 
   @override
-  List<Object> get props => [otp, isVarified, createdAt];
+  List<Object> get props => [otp, isVarified, createdAt, isExpired];
 
   factory SmsState.initial() {
     return SmsState(
-      otp: '',
-      isVarified: false,
-      createdAt: DateTime.now(),
-    );
+        otp: '',
+        isVarified: false,
+        createdAt: DateTime.now(),
+        isExpired: false);
   }
 }

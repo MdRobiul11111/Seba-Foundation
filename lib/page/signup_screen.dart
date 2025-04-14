@@ -2,18 +2,20 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
+import 'package:seba_app1/application/auth/sms/sms_provider.dart';
 import 'package:seba_app1/page/user_regi.dart';
 
-class SignupScreen extends ConsumerStatefulWidget {
+class SignupScreen extends StatefulHookConsumerWidget {
   const SignupScreen({super.key});
 
   @override
@@ -194,8 +196,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           }
           return;
         } else {
+          final smsSent =
+              await ref.read(smsStateProvider.notifier).sendOtp(phoneNumber);
           if (context.mounted) {
-            _showOTP(context);
+            if (smsSent) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Otp Sent to your Phone!'),
+                  backgroundColor: Color(0xff008000),
+                ),
+              );
+              _showOTP(context);
+            }
           }
         }
       }
@@ -446,146 +458,141 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   void _showOTP(BuildContext context) {
-    final pinController = TextEditingController();
-    String validPin = '';
-    int timeLeft = 120; // 2 minutes in seconds
-    Timer? timer;
-
-    // Generate random 4-digit PIN
-    Random random = Random();
-    validPin = List.generate(4, (_) => random.nextInt(10)).join();
-    // Auto-fill the PIN
-    pinController.text = validPin;
-
-    // Timer function
-    void startTimer() {
-      timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        if (timeLeft > 0) {
-          timeLeft--;
-          // Force rebuild to update timer text
-          (context as Element).markNeedsBuild();
-        } else {
-          timer.cancel();
-        }
-      });
-    }
-
-    // Format time as mm:ss
-    String formatTime(int seconds) {
-      int minutes = seconds ~/ 60;
-      int remainingSeconds = seconds % 60;
-      return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
-    }
-
-    void showLoadingDialog() {
-      Future.delayed(Duration(seconds: 2), () {
-        registerUser();
-      });
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Row(
-              children: [
-                CircularProgressIndicator(
-                  color: Color(0xff008000),
-                ),
-                SizedBox(width: 20.w),
-                Text("OTP is right and\n Registration under processing"),
-              ],
-            ),
-          );
-        },
-      );
-    }
-
-    // Start timer when dialog shows
-    startTimer();
-    Future.delayed(Duration(seconds: 3), () {
-      showLoadingDialog();
-    });
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.r),
-            ),
-            child: Container(
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(15.r)),
-              height: 490.h,
-              child: Padding(
-                padding: EdgeInsets.only(top: 13.0.h, left: 17.w, right: 17.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      "images/otp_logo.png",
-                      width: 80.w,
-                      height: 80.w,
-                    ),
-                    SizedBox(height: 15.h),
-                    Text(
-                      "OTP Verification",
-                      style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff008000)),
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      "Verification code sent to your number",
-                      style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                    ),
-                    SizedBox(height: 12.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _numberController.text,
-                          style: TextStyle(
-                              color: Color(0xffD32F2F), fontSize: 18.sp),
-                        ),
-                        SizedBox(width: 15.w),
-                        ImageIcon(AssetImage("images/editic.png"),
-                            color: Color(0xff008000), size: 18.r),
-                      ],
-                    ),
-                    SizedBox(height: 30.h),
-                    Pinput(
-                      length: 4,
-                      controller: pinController,
-                      validator: (value) {
-                        return value == validPin ? null : "Invalid OTP";
-                      },
-                      onCompleted: (pin) {
-                        if (pin == validPin) {
-                          // Instead of closing the dialog, show the loading dialog after 3 seconds
-                        }
-                      },
-                      errorBuilder: (errorText, pin) {
-                        return Text(
-                          errorText ?? "",
-                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 40.h),
-                    Text(
-                      "Re-send code: ${formatTime(timeLeft)}",
-                      style: TextStyle(color: Color(0xffD32F2F)),
-                    ),
-                  ],
+          final state = ref.watch(smsStateProvider);
+          return HookBuilder(builder: (context) {
+            final pinController = useTextEditingController();
+            final timeLeft = useState(120); // 2 minutes in seconds
+            final showTimer = useState(true);
+
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              child: Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(15.r)),
+                height: 490.h,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(top: 13.0.h, left: 17.w, right: 17.w),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "images/otp_logo.png",
+                        width: 80.w,
+                        height: 80.w,
+                      ),
+                      SizedBox(height: 15.h),
+                      Text(
+                        "OTP Verification",
+                        style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff008000)),
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        "Verification code sent to your number",
+                        style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        _numberController.text,
+                        style: TextStyle(
+                            color: Color(0xffD32F2F), fontSize: 18.sp),
+                      ),
+                      SizedBox(height: 30.h),
+                      Pinput(
+                        length: 4,
+                        controller: pinController,
+                        validator: (value) {
+                          return value == state.otp
+                              ? null
+                              : state.isExpired
+                                  ? 'Otp Expired'
+                                  : "Invalid OTP";
+                        },
+                        onCompleted: (pin) async {
+                          final validation = await ref
+                              .read(smsStateProvider.notifier)
+                              .verifyOtp(pinController.text);
+                          if (validation) {
+                            Navigator.pop(context);
+                            registerUser();
+                          }
+                        },
+                        errorBuilder: (errorText, pin) {
+                          return Text(
+                            errorText ?? "",
+                            style:
+                                TextStyle(color: Colors.red, fontSize: 12.sp),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 40.h),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Re-send code: ",
+                            style: TextStyle(color: Color(0xffD32F2F)),
+                          ),
+                          if (showTimer.value)
+                            TimerCountdown(
+                              enableDescriptions: false,
+                              endTime:
+                                  state.createdAt.add(Duration(seconds: 120)),
+                              onEnd: () {
+                                showTimer.value = false;
+                              },
+                              spacerWidth: 1.w,
+                              onTick: (remainingTime) {
+                                timeLeft.value = remainingTime.inSeconds;
+                              },
+                              format: CountDownTimerFormat.minutesSeconds,
+                              timeTextStyle:
+                                  TextStyle(color: Color(0xffD32F2F)),
+                            ),
+                          if (!showTimer.value)
+                            InkWell(
+                              onTap: () async {
+                                final sent = await ref
+                                    .read(smsStateProvider.notifier)
+                                    .sendOtp(_numberController.text);
+                                if (sent) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Otp Sent!'),
+                                      backgroundColor: Color(0xff008000),
+                                    ),
+                                  );
+                                  showTimer.value = true;
+                                }
+                              },
+                              child: Text(
+                                'Resend',
+                                style: TextStyle(
+                                  color: Color(0xff008000),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }).then((_) {
-      // Clean up timer when dialog is closed
-      timer?.cancel();
-    });
+            );
+          });
+        });
+    //     .then((_) {
+    //   // Clean up timer when dialog is closed
+    //   timer?.cancel();
+    // });
   }
 }
