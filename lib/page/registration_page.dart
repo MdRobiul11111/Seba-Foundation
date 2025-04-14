@@ -21,16 +21,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _postController = TextEditingController();
   final _localAddressController = TextEditingController();
 // Check if Representative Code exists in Firestore
-  Future<bool> _checkRepresentativeCodeExists(String code) async {
-    final firestore = FirebaseFirestore.instance;
-    final doc = await firestore.collection('Representative').doc(code).get();
-    return doc.exists;
-  }
+  // Future<bool> _checkRepresentativeCodeExists(String code) async {
+  //   final firestore = FirebaseFirestore.instance;
+  //   final doc = await firestore.collection('Representative').doc(code).get();
+  //   return doc.exists;
+  // }
 
   String? selectedDivision;
   String? selectedDistrict;
   String? selectedThana;
-  bool _isLoading = false;
+  bool isLoading = false;
 
   final List<String> divisions = [
     'Barisal',
@@ -734,13 +734,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
   };
   void _showLoadingDialog() {
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
   }
 
   void _hideLoadingDialog() {
     setState(() {
-      _isLoading = false;
+      isLoading = false;
     });
   }
 

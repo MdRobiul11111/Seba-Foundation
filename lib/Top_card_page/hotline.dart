@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,19 +43,25 @@ class _HotlineState extends State<Hotline> {
         if (await canLaunchUrl(url)) {
           await launchUrl(url, mode: LaunchMode.externalApplication);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Could not launch the link")),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Could not launch the link")),
+            );
+          }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("No link available")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("No link available")),
+          );
+        }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No link found in database")),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("No link found in database")),
+        );
+      }
     }
   }
 
@@ -83,20 +90,31 @@ class _HotlineState extends State<Hotline> {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
               // Show error if URL cannot be launched
-              _showErrorSnackBar(context, "Could not launch the link");
+              if (context.mounted) {
+                _showErrorSnackBar(context, "Could not launch the link");
+              }
             }
           } else {
-            _showErrorSnackBar(context, "Invalid URL format");
+            if (context.mounted) {
+              _showErrorSnackBar(context, "Invalid URL format");
+            }
           }
         } else {
-          _showErrorSnackBar(context, "No link available");
+          if (context.mounted) {
+            _showErrorSnackBar(context, "No link available");
+          }
         }
       } else {
-        _showErrorSnackBar(context, "No link found in database");
+        if (context.mounted) {
+          _showErrorSnackBar(context, "No link found in database");
+        }
       }
     } catch (e) {
       // Handle any unexpected errors
-      _showErrorSnackBar(context, "An error occurred while fetching the link");
+      if (context.mounted) {
+        _showErrorSnackBar(
+            context, "An error occurred while fetching the link");
+      }
     }
   }
 
@@ -111,8 +129,9 @@ class _HotlineState extends State<Hotline> {
   }
 
   void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       debugPrint("Could not launch $url");
     }
@@ -147,22 +166,32 @@ class _HotlineState extends State<Hotline> {
             final bool? result = await platform.invokeMethod('openLink', link);
 
             if (result != true) {
-              _sh22owErrorSnackBar(context, "Could not launch the link");
+              if (context.mounted) {
+                _sh22owErrorSnackBar(context, "Could not launch the link");
+              }
             }
           } on PlatformException catch (e) {
             // Handle platform-specific errors
-            _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
+            if (context.mounted) {
+              _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
+            }
           }
         } else {
-          _sh22owErrorSnackBar(context, "No link available");
+          if (context.mounted) {
+            _sh22owErrorSnackBar(context, "No link available");
+          }
         }
       } else {
-        _sh22owErrorSnackBar(context, "No link found in database");
+        if (context.mounted) {
+          _sh22owErrorSnackBar(context, "No link found in database");
+        }
       }
     } catch (e) {
       // Handle any unexpected errors
-      _sh22owErrorSnackBar(
-          context, "An error occurred while fetching the link");
+      if (context.mounted) {
+        _sh22owErrorSnackBar(
+            context, "An error occurred while fetching the link");
+      }
     }
   }
 
@@ -186,22 +215,32 @@ class _HotlineState extends State<Hotline> {
             final bool? result = await platform.invokeMethod('openLink', link);
 
             if (result != true) {
-              _sh22owErrorSnackBar(context, "Could not launch the link");
+              if (context.mounted) {
+                _sh22owErrorSnackBar(context, "Could not launch the link");
+              }
             }
           } on PlatformException catch (e) {
             // Handle platform-specific errors
-            _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
+            if (context.mounted) {
+              _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
+            }
           }
         } else {
-          _sh22owErrorSnackBar(context, "No link available");
+          if (context.mounted) {
+            _sh22owErrorSnackBar(context, "No link available");
+          }
         }
       } else {
-        _sh22owErrorSnackBar(context, "No link found in database");
+        if (context.mounted) {
+          _sh22owErrorSnackBar(context, "No link found in database");
+        }
       }
     } catch (e) {
       // Handle any unexpected errors
-      _sh22owErrorSnackBar(
-          context, "An error occurred while fetching the link");
+      if (context.mounted) {
+        _sh22owErrorSnackBar(
+            context, "An error occurred while fetching the link");
+      }
     }
   }
 
@@ -246,7 +285,7 @@ class _HotlineState extends State<Hotline> {
         }
       }
     } catch (e) {
-      print("Error fetching phone number: $e");
+      Logger().e("Error fetching phone number: $e");
       // State remains "No number found" if there's an error
     }
   }
@@ -281,7 +320,7 @@ class _HotlineState extends State<Hotline> {
         }
       }
     } catch (e) {
-      print("Error fetching location: $e");
+      Logger().e("Error fetching location: $e");
       // State remains "No location found" if there's an error
     }
   }
@@ -296,10 +335,12 @@ class _HotlineState extends State<Hotline> {
           throw 'Could not launch location';
         }
       } catch (e) {
-        print('Error launching location: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open location')),
-        );
+        Logger().e('Error launching location: $e');
+        {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not open location')),
+          );
+        }
       }
     } else {
       // If no maps link, show a snackbar

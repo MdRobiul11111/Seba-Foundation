@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:seba_app1/page/RegistrationPage.dart';
+import 'package:seba_app1/page/registration_page.dart';
 
 class Representative extends StatefulWidget {
   const Representative({super.key});

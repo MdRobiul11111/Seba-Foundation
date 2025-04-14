@@ -4,15 +4,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:seba_app1/widgets/profile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Top_card_page/blood.dart';
-import '../Top_card_page/find_doctor.dart';
-import '../Top_card_page/hotline.dart';
-import '../Top_card_page/representative.dart';
-import '../Top_card_page/thela_regi.dart';
+import '../top_card_page/blood.dart';
+import '../top_card_page/find_doctor.dart';
+import '../top_card_page/hotline.dart';
+import '../top_card_page/representative.dart';
+import '../top_card_page/thela_regi.dart';
 import '../page/chat1.dart';
 import '../page/login_signup.dart';
 import '../page/promo1.dart';
@@ -78,87 +79,105 @@ class _HomeState extends State<Home> {
         if (await canLaunchUrl(url)) {
           await launchUrl(url, mode: LaunchMode.externalApplication);
         } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Could not launch the link")),
+            );
+          }
+        }
+      } else {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Could not launch the link")),
+            SnackBar(content: Text("No link available")),
           );
         }
-      } else {
+      }
+    } else {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("No link available")),
+          SnackBar(content: Text("No link found in database")),
         );
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No link found in database")),
-      );
     }
   }
 
-  void _checkLoginAndNaviga1te(BuildContext context) async {
-    try {
-      // Fetch the document from Firestore
-      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc("aboutUs")
-          .get();
+  // void _checkLoginAndNaviga1te(BuildContext context) async {
+  //   try {
+  //     // Fetch the document from Firestore
+  //     final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+  //         .collection("Links")
+  //         .doc("aboutUs")
+  //         .get();
 
-      // Check if the document exists and contains data
-      if (snapshot.exists && snapshot.data() != null) {
-        // Safely extract the link using null-aware operator
-        final String? link = snapshot.get("link");
+  //     // Check if the document exists and contains data
+  //     if (snapshot.exists && snapshot.data() != null) {
+  //       // Safely extract the link using null-aware operator
+  //       final String? link = snapshot.get("link");
 
-        // Validate the link
-        if (link != null && link.isNotEmpty) {
-          final Uri? url = Uri.tryParse(link);
+  //       // Validate the link
+  //       if (link != null && link.isNotEmpty) {
+  //         final Uri? url = Uri.tryParse(link);
 
-          if (url != null) {
-            // Attempt to launch the URL
-            final bool canLaunch = await canLaunchUrl(url);
+  //         if (url != null) {
+  //           // Attempt to launch the URL
+  //           final bool canLaunch = await canLaunchUrl(url);
 
-            if (canLaunch) {
-              await launchUrl(url, mode: LaunchMode.externalApplication);
-            } else {
-              // Show error if URL cannot be launched
-              _showErrorSnackBar(context, "Could not launch the link");
-            }
-          } else {
-            _showErrorSnackBar(context, "Invalid URL format");
-          }
-        } else {
-          _showErrorSnackBar(context, "No link available");
-        }
-      } else {
-        _showErrorSnackBar(context, "No link found in database");
-      }
-    } catch (e) {
-      // Handle any unexpected errors
-      _showErrorSnackBar(context, "An error occurred while fetching the link");
-    }
-  }
+  //           if (canLaunch) {
+  //             await launchUrl(url, mode: LaunchMode.externalApplication);
+  //           } else {
+  //             // Show error if URL cannot be launched
+  //             if (context.mounted) {
+  //               _showErrorSnackBar(context, "Could not launch the link");
+  //             }
+  //           }
+  //         } else {
+  //           if (context.mounted) {
+  //             _showErrorSnackBar(context, "Invalid URL format");
+  //           }
+  //         }
+  //       } else {
+  //         if (context.mounted) {
+  //           _showErrorSnackBar(context, "No link available");
+  //         }
+  //       }
+  //     } else {
+  //       if (context.mounted) {
+  //         _showErrorSnackBar(context, "No link found in database");
+  //       }
+  //     }
+  //   } catch (e) {
+  //     // Handle any unexpected errors
+  //     if (context.mounted) {
+  //       _showErrorSnackBar(
+  //           context, "An error occurred while fetching the link");
+  //     }
+  //   }
+  // }
 
 // Helper method to show error snackbar
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+  // void _showErrorSnackBar(BuildContext context, String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //       backgroundColor: Colors.red,
+  //     ),
+  //   );
+  // }
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      debugPrint("Could not launch $url");
-    }
-  }
+  // void _launchURL(String url) async {
+  //   final Uri uri = Uri.parse(url);
+  //   if (await canLaunchUrl(uri)) {
+  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  //   } else {
+  //     debugPrint("Could not launch $url");
+  //   }
+  // }
 
-  void _showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+  // void _showMessage(BuildContext context, String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text(message)),
+  //   );
+  // }
 
   static const platform = MethodChannel('com.yourapp/link_opener');
 
@@ -182,63 +201,83 @@ class _HomeState extends State<Home> {
             final bool? result = await platform.invokeMethod('openLink', link);
 
             if (result != true) {
-              _sh22owErrorSnackBar(context, "Could not launch the link");
+              if (context.mounted) {
+                _sh22owErrorSnackBar(context, "Could not launch the link");
+              }
             }
           } on PlatformException catch (e) {
             // Handle platform-specific errors
-            _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
-          }
-        } else {
-          _sh22owErrorSnackBar(context, "No link available");
-        }
-      } else {
-        _sh22owErrorSnackBar(context, "No link found in database");
-      }
-    } catch (e) {
-      // Handle any unexpected errors
-      _sh22owErrorSnackBar(
-          context, "An error occurred while fetching the link");
-    }
-  }
-
-  static Future<void> _checkLoginAndNavigat81e(BuildContext context) async {
-    try {
-      // Fetch the document from Firestore
-      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc("sliders")
-          .get();
-
-      // Check if the document exists and contains data
-      if (snapshot.exists && snapshot.data() != null) {
-        // Safely extract the link using null-aware operator
-        final String? link = snapshot.get("link");
-
-        // Validate the link
-        if (link != null && link.isNotEmpty) {
-          try {
-            // Use method channel to open link in native browser
-            final bool? result = await platform.invokeMethod('openLink', link);
-
-            if (result != true) {
-              _sh22owErrorSnackBar(context, "Could not launch the link");
+            if (context.mounted) {
+              _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
             }
-          } on PlatformException catch (e) {
-            // Handle platform-specific errors
-            _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
           }
         } else {
-          _sh22owErrorSnackBar(context, "No link available");
+          if (context.mounted) {
+            _sh22owErrorSnackBar(context, "No link available");
+          }
         }
       } else {
-        _sh22owErrorSnackBar(context, "No link found in database");
+        if (context.mounted) {
+          _sh22owErrorSnackBar(context, "No link found in database");
+        }
       }
     } catch (e) {
       // Handle any unexpected errors
-      _sh22owErrorSnackBar(
-          context, "An error occurred while fetching the link");
+      if (context.mounted) {
+        _sh22owErrorSnackBar(
+            context, "An error occurred while fetching the link");
+      }
     }
   }
+
+  // static Future<void> _checkLoginAndNavigat81e(BuildContext context) async {
+  //   try {
+  //     // Fetch the document from Firestore
+  //     final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+  //         .collection("Links")
+  //         .doc("sliders")
+  //         .get();
+
+  //     // Check if the document exists and contains data
+  //     if (snapshot.exists && snapshot.data() != null) {
+  //       // Safely extract the link using null-aware operator
+  //       final String? link = snapshot.get("link");
+
+  //       // Validate the link
+  //       if (link != null && link.isNotEmpty) {
+  //         try {
+  //           // Use method channel to open link in native browser
+  //           final bool? result = await platform.invokeMethod('openLink', link);
+
+  //           if (result != true) {
+  //             if (context.mounted) {
+  //               _sh22owErrorSnackBar(context, "Could not launch the link");
+  //             }
+  //           }
+  //         } on PlatformException catch (e) {
+  //           // Handle platform-specific errors
+  //           if (context.mounted) {
+  //             _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
+  //           }
+  //         }
+  //       } else {
+  //         if (context.mounted) {
+  //           _sh22owErrorSnackBar(context, "No link available");
+  //         }
+  //       }
+  //     } else {
+  //       if (context.mounted) {
+  //         _sh22owErrorSnackBar(context, "No link found in database");
+  //       }
+  //     }
+  //   } catch (e) {
+  //     // Handle any unexpected errors
+  //     if (context.mounted) {
+  //       _sh22owErrorSnackBar(
+  //           context, "An error occurred while fetching the link");
+  //     }
+  //   }
+  // }
 
   // Helper method to show error snackbar
   static void _sh22owErrorSnackBar(BuildContext context, String message) {
@@ -251,14 +290,14 @@ class _HomeState extends State<Home> {
   }
 
   // Helper method to show error snackbar
-  static void _showErrorSnackBa1r(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+  // static void _showErrorSnackBa1r(BuildContext context, String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //       backgroundColor: Colors.red,
+  //     ),
+  //   );
+  // }
 
   List<Map<String, dynamic>> sliderData = [];
   bool isSliderLoading = false;
@@ -285,9 +324,9 @@ class _HomeState extends State<Home> {
       });
     } catch (e) {
       setState(() => isBannerLoading = false);
-      print('Error loading banner data: $e');
+      Logger().e('Error loading banner data: $e');
     }
-    print("Loaded banner data: $bannerData");
+    Logger().f("Loaded banner data: $bannerData");
   }
 
   @override
@@ -443,9 +482,9 @@ class _HomeState extends State<Home> {
       });
     } catch (e) {
       setState(() => isSliderLoading = false);
-      print('Error loading slider data: $e');
+      Logger().e('Error loading slider data: $e');
     }
-    print("AAAA$sliderData");
+    Logger().f("AAAA$sliderData");
   }
 
   // Improved carousel slider with Firestore data
@@ -639,7 +678,7 @@ class _HomeState extends State<Home> {
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
           insetPadding: EdgeInsets.all(10),
-          content: Container(
+          content: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -922,7 +961,7 @@ class _HomeState extends State<Home> {
                           decoration: BoxDecoration(
                             color: _currentBannerPage == index
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.6),
+                                : Colors.white.withValues(alpha: .6),
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                         );
@@ -1198,24 +1237,28 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 try {
                   await FirebaseAuth.instance.signOut();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Successfully logged out'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginSignup()),
-                    (route) => false,
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Successfully logged out'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginSignup()),
+                      (route) => false,
+                    );
+                  }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Failed to logout: ${e.toString()}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to logout: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }
               },
             ),

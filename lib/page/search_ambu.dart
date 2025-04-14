@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -918,7 +919,7 @@ class _SearchAmbuState extends State<SearchAmbu> {
                                       if (await canLaunchUrl(url)) {
                                         await launchUrl(url);
                                       } else {
-                                        print('cannot launch this url');
+                                        Logger().e('cannot launch this url');
                                       }
                                     },
                                     child: Text(item['phone'] ?? 'N/A')),

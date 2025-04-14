@@ -1,4 +1,6 @@
 // signup_screen.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:math';
 
@@ -6,23 +8,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 import 'package:seba_app1/page/user_regi.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formkey = GlobalKey<FormState>();
   bool _isObscure = true;
   bool _isObscure1 = true;
   String validPin = "1234";
 
-  final TextEditingController _userController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _repasswordController = TextEditingController();
@@ -43,7 +47,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       // Store user data in Firestore
       await _firestore.collection('Users').doc(email).set({
-        'username': _userController.text,
+        'username': userController.text,
         'phoneNumber': _numberController.text,
         'email': email,
         'createdAt': FieldValue.serverTimestamp(),
@@ -51,9 +55,9 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       await _firestore
           .collection('Useername')
-          .doc(_userController.text + "@gmail.com")
+          .doc("${userController.text}@gmail.com")
           .set({
-        'username': _userController.text,
+        'username': userController.text,
         'phoneNumber': _numberController.text,
         'email': email,
         'createdAt': FieldValue.serverTimestamp(),
@@ -101,7 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       return userDoc.docs.isNotEmpty || authMethods.isNotEmpty;
     } catch (e) {
-      print('Error checking user existence: $e');
+      Logger().e('Error checking user existence: $e');
       return false;
     }
   }
@@ -136,7 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       return usernameDoc.docs.isNotEmpty;
     } catch (e) {
-      print('Error checking username existence: $e');
+      Logger().e('Error checking username existence: $e');
       return false;
     }
   }
@@ -155,34 +159,44 @@ class _SignupScreenState extends State<SignupScreen> {
     final userExists = await checkUserExists(phoneNumber);
 
     // Dismiss loading dialog
-    Navigator.pop(context);
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
 
     if (userExists) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('User already exists with this phone number'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User already exists with this phone number'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } else {
-      String username = _userController.text.trim();
+      String username = userController.text.trim();
       bool usernameExists = await checkUsernameExists(username);
       if (usernameExists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Username already exists')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Username already exists')),
+          );
+        }
         return;
       } else {
         // Check password length
         String password = _passwordController.text.trim();
         if (password.length < 6) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text('Password must be at least 6 characters long')),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Password must be at least 6 characters long')),
+            );
+          }
           return;
         } else {
-          _showOTP(context);
+          if (context.mounted) {
+            _showOTP(context);
+          }
         }
       }
     }
@@ -194,7 +208,7 @@ class _SignupScreenState extends State<SignupScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(child: Image.asset("images/bgn1.png")),
+            Image.asset("images/bgn1.png"),
             SizedBox(height: 20.h),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 18.w),
@@ -228,7 +242,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       SizedBox(height: 20.h),
                       TextFormField(
-                        controller: _userController,
+                        controller: userController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -391,18 +405,18 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(height: 25.h),
                       TextButton(
                         onPressed: () => validateAndProceed(context),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(Color(0xff008000)),
+                            shape:
+                                WidgetStatePropertyAll(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.r),
+                            )),
+                            padding: WidgetStatePropertyAll(
+                                EdgeInsets.symmetric(horizontal: 50.w))),
                         child: Text("Sign Up",
                             style: TextStyle(
                                 color: Colors.white, fontSize: 16.sp)),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Color(0xff008000)),
-                            shape:
-                                MaterialStatePropertyAll(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.r),
-                            )),
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.symmetric(horizontal: 50.w))),
                       ),
                       SizedBox(height: 15.h),
                       Text("Have an account?"),
@@ -432,26 +446,26 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _showOTP(BuildContext context) {
-    final _pinController = TextEditingController();
+    final pinController = TextEditingController();
     String validPin = '';
-    int _timeLeft = 120; // 2 minutes in seconds
-    Timer? _timer;
+    int timeLeft = 120; // 2 minutes in seconds
+    Timer? timer;
 
     // Generate random 4-digit PIN
     Random random = Random();
     validPin = List.generate(4, (_) => random.nextInt(10)).join();
     // Auto-fill the PIN
-    _pinController.text = validPin;
+    pinController.text = validPin;
 
     // Timer function
     void startTimer() {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        if (_timeLeft > 0) {
-          _timeLeft--;
+      timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (timeLeft > 0) {
+          timeLeft--;
           // Force rebuild to update timer text
           (context as Element).markNeedsBuild();
         } else {
-          _timer?.cancel();
+          timer.cancel();
         }
       });
     }
@@ -543,7 +557,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: 30.h),
                     Pinput(
                       length: 4,
-                      controller: _pinController,
+                      controller: pinController,
                       validator: (value) {
                         return value == validPin ? null : "Invalid OTP";
                       },
@@ -561,7 +575,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     SizedBox(height: 40.h),
                     Text(
-                      "Re-send code: ${formatTime(_timeLeft)}",
+                      "Re-send code: ${formatTime(timeLeft)}",
                       style: TextStyle(color: Color(0xffD32F2F)),
                     ),
                   ],
@@ -571,7 +585,7 @@ class _SignupScreenState extends State<SignupScreen> {
           );
         }).then((_) {
       // Clean up timer when dialog is closed
-      _timer?.cancel();
+      timer?.cancel();
     });
   }
 }

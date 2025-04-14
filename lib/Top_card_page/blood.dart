@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 
 class Blood extends StatefulWidget {
@@ -748,7 +749,7 @@ class _BloodState extends State<Blood> {
         return {
           'name': data['name'] ?? 'N/A',
           'bloodGroup': data['bloodGroup'] ?? 'N/A',
-          'phoneNumber': data['phoneNumber'] ?? 'N/A',
+          // 'phoneNumber': data['phoneNumber'] ?? 'N/A',
           'age': data['age']?.toString() ?? 'N/A',
           'localAddress': data['localAddress'] ?? 'N/A',
           'phoneNumber': data['phoneNumber']?.toString() ?? 'N/A',
@@ -767,9 +768,9 @@ class _BloodState extends State<Blood> {
       });
     } catch (e) {
       setState(() => isLoading = false);
-      print('Error loading data: $e');
+      Logger().e('Error loading data: $e');
     }
-    print("JJJJJJ$allData");
+    Logger().f("JJJJJJ$allData");
   }
 
   void updateDistricts(String division) {
@@ -822,7 +823,7 @@ class _BloodState extends State<Blood> {
     try {
       await platform.invokeMethod("dialNumber", phoneNumber);
     } catch (e) {
-      print("Failed to open dial pad: $e");
+      Logger().e("Failed to open dial pad: $e");
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -748,7 +749,7 @@ class _ProfileState extends State<Profile> {
     return DateFormat('dd/MM/yy').format(DateTime.now());
   }
 
-  void _submitForm() async {
+  _submitForm(BuildContext context) async {
     // Check if all required fields are filled
 
     // Show confirmation dialog
@@ -756,13 +757,15 @@ class _ProfileState extends State<Profile> {
     if (!confirmUpload) return; // If user selects "No", stop execution
 
     // Show progress dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+    }
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     // Create a model map
@@ -777,7 +780,7 @@ class _ProfileState extends State<Profile> {
       'localAddress': localAddressController.text,
       'donationComplete': value,
       'asABloodDonor': value1,
-      'age': age_det5ected,
+      'age': ageDet5ected,
       'profile_image': _imagePath?.isNotEmpty == true
           ? _imageUrl
           : (_imageUrl?.isNotEmpty == true ? _imageUrl : "No image"),
@@ -807,7 +810,7 @@ class _ProfileState extends State<Profile> {
               .collection('Donation')
               .doc(userEmail)
               .delete();
-          print("Existing data in 'Donation' deleted.");
+          Logger().f("Existing data in 'Donation' deleted.");
         }
       } else {
         await FirebaseFirestore.instance
@@ -816,20 +819,24 @@ class _ProfileState extends State<Profile> {
             .set(donationData);
       }
       // Dismiss progress dialog
-      Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop();
 
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data uploaded successfully')),
-      );
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data uploaded successfully')),
+        );
+      }
     } catch (e) {
       // Dismiss progress dialog
-      Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop();
 
-      // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload data: $e')),
-      );
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload data: $e')),
+        );
+      }
     }
   }
 
@@ -859,9 +866,9 @@ class _ProfileState extends State<Profile> {
         false; // If user dismisses dialog, return false
   }
 
-  File? _imageFile;
-  String? age_det5ected;
-  bool _isUploading = false;
+  File? imageFile;
+  String? ageDet5ected;
+  bool isUploading = false;
   Future<void> readalldata() async {
     try {
       final userEmail = FirebaseAuth.instance.currentUser?.email;
@@ -883,18 +890,18 @@ class _ProfileState extends State<Profile> {
           selectedDivision = data['division'] ?? '';
           selectedDistrict = data['district'] ?? '';
           selectedThana = data['thana'] ?? '';
-          age_det5ected = data['age'] ?? '';
+          ageDet5ected = data['age'] ?? '';
           localAddressController.text = data['localAddress'] ?? '';
           value = data['donationComplete'] ?? false;
           value1 = data['asABloodDonor'] ?? false;
         });
       }
     } catch (e) {
-      print("Error fetching data: $e");
+      Logger().e("Error fetching data: $e");
     }
   }
 
-  int _currentBannerPage = 0;
+  // int _currentBannerPage = 0;
   String? _imagePath;
   String? _imageUrl;
   final ImagePicker _picker = ImagePicker();
@@ -983,7 +990,9 @@ class _ProfileState extends State<Profile> {
       );
 
       if (pickedFile != null) {
-        showLoadingDialog(context);
+        if (context.mounted) {
+          showLoadingDialog(context);
+        }
 
         setState(() {
           _imagePath = pickedFile.path;
@@ -1010,21 +1019,25 @@ class _ProfileState extends State<Profile> {
             _imageUrl = downloadURL;
           });
 
-          Navigator.pop(context);
+          if (context.mounted) {
+            Navigator.pop(context);
 
-          showSuccessMessage(context);
+            showSuccessMessage(context);
+          }
         }
       }
     } catch (e) {
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.pop(context);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error uploading image: $e'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error uploading image: $e'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
 
       debugPrint('Error picking/uploading image: $e');
     }
@@ -1060,7 +1073,7 @@ class _ProfileState extends State<Profile> {
         child: Column(
           children: [
             // Profile Header (remains the same as in previous code)
-            Container(
+            SizedBox(
               width: double.infinity,
               height: 265.h,
               child: Stack(
@@ -1079,7 +1092,7 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 50.h,
                         width: double.infinity,
                       ),
@@ -1369,7 +1382,7 @@ class _ProfileState extends State<Profile> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: ElevatedButton(
-                  onPressed: _saveChanges,
+                  onPressed: _saveChanges(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xff008000),
                     minimumSize: Size(double.infinity, 50.h),
@@ -1395,8 +1408,8 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  void _saveChanges() {
-    _submitForm();
+  _saveChanges(BuildContext context) {
+    _submitForm(context);
     // Implement your save logic here
     // For example, save to Firestore, update local state, etc.
     setState(() {

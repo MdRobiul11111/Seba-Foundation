@@ -26,21 +26,32 @@ class LinkOpener {
             final bool? result = await platform.invokeMethod('openLink', link);
 
             if (result != true) {
-              _showErrorSnackBar(context, "Could not launch the link");
+              if (context.mounted) {
+                _showErrorSnackBar(context, "Could not launch the link");
+              }
             }
           } on PlatformException catch (e) {
             // Handle platform-specific errors
-            _showErrorSnackBar(context, "Error opening link: ${e.message}");
+            if (context.mounted) {
+              _showErrorSnackBar(context, "Error opening link: ${e.message}");
+            }
           }
         } else {
-          _showErrorSnackBar(context, "No link available");
+          if (context.mounted) {
+            _showErrorSnackBar(context, "No link available");
+          }
         }
       } else {
-        _showErrorSnackBar(context, "No link found in database");
+        if (context.mounted) {
+          _showErrorSnackBar(context, "No link found in database");
+        }
       }
     } catch (e) {
       // Handle any unexpected errors
-      _showErrorSnackBar(context, "An error occurred while fetching the link");
+      if (context.mounted) {
+        _showErrorSnackBar(
+            context, "An error occurred while fetching the link");
+      }
     }
   }
 

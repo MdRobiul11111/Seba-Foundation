@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'SignupScreen.dart';
+import 'signup_screen.dart';
 import 'home_page.dart'; // Assuming you have a HomePage
 
 class LoginSignup extends StatefulWidget {
@@ -60,16 +60,20 @@ class _LoginScreenState extends State<LoginSignup> {
             UserCredential userCredential = await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: email, password: password);
 
-            Navigator.of(context).pop(); // Dismiss the dialog
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            if (context.mounted) {
+              Navigator.of(context).pop(); // Dismiss the dialog
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            }
           } else {
-            Navigator.of(context).pop(); // Dismiss the dialog
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Incorrect password")),
-            );
+            if (context.mounted) {
+              Navigator.of(context).pop(); // Dismiss the dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Incorrect password")),
+              );
+            }
           }
         } else {
           // User does not exist in 'Users' collection, check 'Useername' collection
@@ -93,24 +97,30 @@ class _LoginScreenState extends State<LoginSignup> {
             UserCredential userCredential = await FirebaseAuth.instance
                 .signInWithEmailAndPassword(email: email, password: password);
 
-            Navigator.of(context).pop(); // Dismiss the dialog
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            if (context.mounted) {
+              Navigator.of(context).pop(); // Dismiss the dialog
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            }
           } else {
             // User does not exist in either collection
-            Navigator.of(context).pop(); // Dismiss the dialog
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("User does not exist")),
-            );
+            if (context.mounted) {
+              Navigator.of(context).pop(); // Dismiss the dialog
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("User does not exist")),
+              );
+            }
           }
         }
       } catch (e) {
-        Navigator.of(context).pop(); // Dismiss the dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.toString()}")),
-        );
+        if (context.mounted) {
+          Navigator.of(context).pop(); // Dismiss the dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: ${e.toString()}")),
+          );
+        }
       }
     }
   }
@@ -121,7 +131,7 @@ class _LoginScreenState extends State<LoginSignup> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(child: Image.asset("images/bgn1.png")),
+            Image.asset("images/bgn1.png"),
             SizedBox(height: 20.h),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 18.w),
@@ -232,8 +242,6 @@ class _LoginScreenState extends State<LoginSignup> {
                         onPressed: () {
                           _loginUser(context);
                         },
-                        child: Text("Login",
-                            style: TextStyle(color: Colors.white)),
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStatePropertyAll(Color(0xff008000)),
@@ -243,6 +251,8 @@ class _LoginScreenState extends State<LoginSignup> {
                             )),
                             padding: MaterialStatePropertyAll(
                                 EdgeInsets.symmetric(horizontal: 50.w))),
+                        child: Text("Login",
+                            style: TextStyle(color: Colors.white)),
                       ),
                       SizedBox(height: 8.h),
                       GestureDetector(
@@ -372,7 +382,6 @@ class _LoginScreenState extends State<LoginSignup> {
                                   Navigator.pop(context);
                                   _showVerify(context);
                                 },
-                                child: Text("Send OTP"),
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll(
                                         Color(0xff008000)),
@@ -382,13 +391,13 @@ class _LoginScreenState extends State<LoginSignup> {
                                         RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15.r)))),
+                                child: Text("Send OTP"),
                               ),
                               SizedBox(width: 15.w),
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text("Cancel"),
                                 style: ButtonStyle(
                                     backgroundColor:
                                         MaterialStatePropertyAll(Colors.white),
@@ -404,6 +413,7 @@ class _LoginScreenState extends State<LoginSignup> {
                                     padding: MaterialStatePropertyAll(
                                         EdgeInsets.symmetric(
                                             horizontal: 39.sp))),
+                                child: Text("Cancel"),
                               )
                             ],
                           )
@@ -430,7 +440,7 @@ class _LoginScreenState extends State<LoginSignup> {
               clipBehavior: Clip.none,
               alignment: Alignment.topCenter,
               children: [
-                Container(
+                SizedBox(
                   height: 400.h,
                   child: Padding(
                     padding: EdgeInsets.all(8.0.r),
@@ -492,7 +502,6 @@ class _LoginScreenState extends State<LoginSignup> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text("Confirm"),
                           style: ButtonStyle(
                               backgroundColor:
                                   MaterialStatePropertyAll(Color(0xff008000)),
@@ -504,6 +513,7 @@ class _LoginScreenState extends State<LoginSignup> {
                               )),
                               padding: MaterialStatePropertyAll(
                                   EdgeInsets.symmetric(horizontal: 50.w))),
+                          child: Text("Confirm"),
                         ),
                         SizedBox(height: 30.h),
                         Text(
@@ -516,11 +526,11 @@ class _LoginScreenState extends State<LoginSignup> {
                   ),
                 ),
                 Positioned(
+                  top: -43,
                   child: CircleAvatar(
                     backgroundImage: AssetImage("images/otp_logo.png"),
                     radius: 55.r,
                   ),
-                  top: -43,
                 ),
               ],
             ),
