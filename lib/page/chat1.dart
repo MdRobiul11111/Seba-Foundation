@@ -50,7 +50,8 @@ class _Chat1State extends State<Chat1> {
             .get();
 
         if (userDoc.exists) {
-          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+          Map<String, dynamic> userData =
+              userDoc.data() as Map<String, dynamic>;
           setState(() {
             userName = userData['name'];
             userPhone = userData['phoneNumber'];
@@ -79,7 +80,7 @@ class _Chat1State extends State<Chat1> {
             _messages.add({
               "type": data["type"],
               "content": data["content"],
-              "isMe": data["Itsme"],
+              "isAdmin": data["isAdmin"],
               "timestamp": data["timestamp"]
             });
           }
@@ -94,10 +95,8 @@ class _Chat1State extends State<Chat1> {
   Future<void> _sendNotificationToAdmin(String message) async {
     try {
       // Fetch admin tokens from Firestore
-      DocumentSnapshot adminDoc = await _firestore
-          .collection("Admin")
-          .doc("admin@gmail.com")
-          .get();
+      DocumentSnapshot adminDoc =
+          await _firestore.collection("Admin").doc("admin@gmail.com").get();
 
       if (!adminDoc.exists) {
         print("Admin document not found");
@@ -130,7 +129,8 @@ class _Chat1State extends State<Chat1> {
       const String fcmUrl = 'https://fcm.googleapis.com/fcm/send';
 
       // Your FCM server key - should be stored securely in production
-      const String serverKey = 'YOUR_FCM_SERVER_KEY';  // Replace with actual server key
+      const String serverKey =
+          'YOUR_FCM_SERVER_KEY'; // Replace with actual server key
 
       // For each admin token, send a notification
       for (String token in adminTokens) {
@@ -140,7 +140,9 @@ class _Chat1State extends State<Chat1> {
         Map<String, dynamic> notification = {
           'notification': {
             'title': 'New message from ${userName ?? currentUserEmail}',
-            'body': message.length > 100 ? '${message.substring(0, 97)}...' : message,
+            'body': message.length > 100
+                ? '${message.substring(0, 97)}...'
+                : message,
             'sound': 'default'
           },
           'data': {
@@ -169,11 +171,13 @@ class _Chat1State extends State<Chat1> {
       print("Error sending notification: $e");
     }
   }
+
   String _generateUuid() {
     return DateTime.now().millisecondsSinceEpoch.toString() +
         '_' +
         (1000 + (DateTime.now().microsecond % 9000)).toString();
   }
+
   Future<void> _sendMessage(String message, {String type = "text"}) async {
     if (message.trim().isEmpty) return;
 
@@ -184,7 +188,7 @@ class _Chat1State extends State<Chat1> {
       _messages.add({
         "type": type,
         "content": message,
-        "isMe": true,
+        "isAdmin": false,
         "timestamp": Timestamp.now()
       });
     });
@@ -200,8 +204,8 @@ class _Chat1State extends State<Chat1> {
         "senderId": currentUserEmail,
         "receiverId": adminEmail,
         "timestamp": timestamp,
-        "Itsme":true,
-        "messageId":messageId,
+        "isAdmin": false,
+        "messageId": messageId,
       };
 
       // Store in Indi_Chat collection for user's individual chat history
@@ -214,14 +218,11 @@ class _Chat1State extends State<Chat1> {
       // Store in Chat collection (global chat storage)
       await _firestore
           .collection("Chat")
-      .doc(currentUserEmail)
+          .doc(currentUserEmail)
           .set(messageData);
 
       // Create or update ChatUser data
-      await _firestore
-          .collection("ChatUser")
-          .doc(currentUserEmail)
-          .set({
+      await _firestore.collection("ChatUser").doc(currentUserEmail).set({
         "name": userName,
         "phoneNumber": userPhone,
         "servertime": timestamp,
@@ -270,21 +271,21 @@ class _Chat1State extends State<Chat1> {
 
                     // Show loading indicator
 
-
                     try {
                       // Create a unique filename using timestamp
-                      String fileName = 'chat_${DateTime.now().millisecondsSinceEpoch}.jpg';
+                      String fileName =
+                          'chat_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
                       // Create a reference to the file location in Firebase Storage
-                      Reference storageRef = _storage.ref().child('chat_images/$currentUserEmail/$fileName');
+                      Reference storageRef = _storage
+                          .ref()
+                          .child('chat_images/$currentUserEmail/$fileName');
 
                       // Upload the file to Firebase Storage
                       await storageRef.putFile(File(image.path));
 
                       // Get the download URL
                       String downloadURL = await storageRef.getDownloadURL();
-
-
 
                       // Send the image URL as a message
                       await _sendMessage(downloadURL, type: "image");
@@ -296,7 +297,7 @@ class _Chat1State extends State<Chat1> {
                       });
                     } catch (e) {
                       // Dismiss the loading dialog in case of an error
-                    //  Navigator.of(context).pop();
+                      //  Navigator.of(context).pop();
                       setState(() {
                         // Dismiss the loading dialog
                         Navigator.of(context).pop();
@@ -315,7 +316,6 @@ class _Chat1State extends State<Chat1> {
           );
         },
       );
-
     } catch (e) {
       // Show error message
       Navigator.of(context).pop();
@@ -326,16 +326,16 @@ class _Chat1State extends State<Chat1> {
     }
   }
 
-
   Widget _buildMessageBubble(Map<String, dynamic> message) {
-    bool isMe = message["isMe"];
-print("AAAAAAAAAA$isMe");
+    bool isMe = !message["isAdmin"];
+    print("AAAAAAAAAA$isMe");
     // Format timestamp
     String formattedTime = "";
     if (message["timestamp"] != null) {
       Timestamp timestamp = message["timestamp"] as Timestamp;
       DateTime dateTime = timestamp.toDate();
-      formattedTime = "${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
+      formattedTime =
+          "${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}";
     }
 
     Widget messageContent;
@@ -367,7 +367,8 @@ print("AAAAAAAAAA$isMe");
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             messageContent,
@@ -420,11 +421,12 @@ print("AAAAAAAAAA$isMe");
                 List<Map<String, dynamic>> messages = [];
                 if (snapshot.hasData) {
                   for (var doc in snapshot.data!.docs) {
-                    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                    Map<String, dynamic> data =
+                        doc.data() as Map<String, dynamic>;
                     messages.add({
                       "type": data["type"] ?? "text",
                       "content": data["content"],
-                      "isMe": data["Itsme"] ,
+                      "isAdmin": data["isAdmin"],
                       "timestamp": data["timestamp"]
                     });
                   }
@@ -463,7 +465,8 @@ print("AAAAAAAAAA$isMe");
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               ),
             ),
           ),
