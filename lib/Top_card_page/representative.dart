@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seba_app1/application/app/representive_provider.dart';
 import 'package:seba_app1/page/registration_page.dart';
 
-class Representative extends StatefulWidget {
+class Representative extends ConsumerStatefulWidget {
   const Representative({super.key});
 
   @override
-  State<Representative> createState() => _RepresentativeState();
+  ConsumerState<Representative> createState() => _RepresentativeState();
 }
 
-class _RepresentativeState extends State<Representative> {
+class _RepresentativeState extends ConsumerState<Representative> {
   final _formKey = GlobalKey<FormState>();
   final List<String> representativeCategories = ['Institutional', 'Regional'];
   String? selectedCategory;
@@ -739,62 +741,72 @@ class _RepresentativeState extends State<Representative> {
   }
 
   // Function to handle form submission
-  Future<void> submitForm() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
+  // submitForm(BuildContext context) async {
+  //   setState(() {
+  //     isLoading = true;
+  //     errorMessage = null;
+  //   });
 
-    if (_formKey.currentState!.validate()) {
-      try {
-        // Check if the representative code exists
-        bool codeExists = await checkRepresentativeCodeExists(
-            representativeCodeController.text);
+  //   if (_formKey.currentState!.validate()) {
+  //     final repo = await ref.read(representiveRepoProvider.future);
+  //     try {
+  //       // Check if the representative code exists
 
-        if (codeExists) {
-          setState(() {
-            errorMessage = "Representative code already exists!";
-            isLoading = false;
-          });
+  //       final response = await repo.checkRepresentiveCode(
+  //           code: representativeCodeController.text);
 
-          // Show error dialog
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => RegistrationPage()));
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-          // Code doesn't exist, navigate to registration page
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text("Error"),
-              content: Text(
-                  "Representative code do not  exists. Please use a different code."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("OK"),
-                ),
-              ],
-            ),
-          );
-        }
-      } catch (e) {
-        setState(() {
-          errorMessage = "Error: Do not get code";
-          isLoading = false;
-          setState(() {
-            isLoading = false;
-          });
-        });
-      }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  //       if (response == 'active') {
+  //         setState(() {
+  //           errorMessage = "Representative code already exists!";
+  //           isLoading = false;
+  //         });
+
+  //         // Show error dialog
+  //         if (context.mounted) {
+  //           Navigator.push(
+  //               context,
+  //               MaterialPageRoute(
+  //                   builder: (context) => RegistrationPage(
+  //                         code: representativeCodeController.text,
+  //                       )));
+  //         }
+  //       } else {
+  //         setState(() {
+  //           isLoading = false;
+  //         });
+  //         // Code doesn't exist, navigate to registration page
+  //         if (context.mounted) {
+  //           showDialog(
+  //             context: context,
+  //             builder: (context) => AlertDialog(
+  //               title: Text("Error"),
+  //               content: Text(
+  //                   "Representative code ${response == 'used' ? "already used" : "do not  exists"}. Please use a different code."),
+  //               actions: [
+  //                 TextButton(
+  //                   onPressed: () => Navigator.pop(context),
+  //                   child: Text("OK"),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         }
+  //       }
+  //     } catch (e) {
+  //       setState(() {
+  //         errorMessage = "Error: Do not get code";
+  //         isLoading = false;
+  //         setState(() {
+  //           isLoading = false;
+  //         });
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1303,10 +1315,82 @@ class _RepresentativeState extends State<Representative> {
                 // Submit Button
                 Center(
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : submitForm,
-                    child: isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
-                        : Text("Submit"),
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            setState(() {
+                              isLoading = true;
+                              errorMessage = null;
+                            });
+
+                            if (_formKey.currentState!.validate()) {
+                              final repo = await ref
+                                  .read(representiveRepoProvider.future);
+                              try {
+                                // Check if the representative code exists
+
+                                final response =
+                                    await repo.checkRepresentiveCode(
+                                        code:
+                                            representativeCodeController.text);
+
+                                if (response == 'active') {
+                                  setState(() {
+                                    errorMessage =
+                                        "Representative code already exists!";
+                                    isLoading = false;
+                                  });
+
+                                  // Show error dialog
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                RegistrationPage(
+                                                  code:
+                                                      representativeCodeController
+                                                          .text,
+                                                )));
+                                  }
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  // Code doesn't exist, navigate to registration page
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text(
+                                            "Representative code ${response == 'used' ? "already used" : "do not  exists"}. Please use a different code."),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text("OK"),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                setState(() {
+                                  errorMessage = "Error: Do not get code";
+                                  isLoading = false;
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                });
+                              }
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          },
                     style: ButtonStyle(
                       backgroundColor:
                           WidgetStatePropertyAll(Color(0xff008000)),
@@ -1317,6 +1401,9 @@ class _RepresentativeState extends State<Representative> {
                       padding: WidgetStatePropertyAll(EdgeInsets.symmetric(
                           horizontal: 60.w, vertical: 15.h)),
                     ),
+                    child: isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text("Submit"),
                   ),
                 ),
               ],

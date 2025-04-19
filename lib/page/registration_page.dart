@@ -2,16 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seba_app1/application/app/representive_provider.dart';
 import 'package:seba_app1/page/home_page.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class RegistrationPage extends ConsumerStatefulWidget {
+  final String code;
+  const RegistrationPage({super.key, required this.code});
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  ConsumerState<RegistrationPage> createState() => _RegistrationPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _fatherNameController = TextEditingController();
@@ -773,7 +776,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
               .collection('Registration')
               .doc(currentUser.email)
               .set(userData);
-
+          final repo = await ref.read(representiveRepoProvider.future);
+          await repo.updateRepresentiveCode(
+              code: widget.code, context: context);
           _hideLoadingDialog();
 
           // Show success message

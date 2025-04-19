@@ -48,7 +48,7 @@ class _Profile1State extends State<Profile1> {
         child: Column(
           children: [
             // Profile Header Section
-            Container(
+            SizedBox(
               width: double.infinity,
               height: 265.h,
               child: Stack(
@@ -62,7 +62,7 @@ class _Profile1State extends State<Profile1> {
                         width: double.infinity,
                         color: const Color(0xffD9D9D9),
                       ),
-                      Container(
+                      SizedBox(
                         height: 50.h,
                         width: double.infinity,
                       ),

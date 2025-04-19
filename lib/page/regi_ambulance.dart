@@ -799,6 +799,7 @@ class _RegiAmbulanceState extends State<RegiAmbulance> {
         'district': _selectedDistrict,
         'thana': _selectedThana,
         'timestamp': FieldValue.serverTimestamp(), // Optional: Add a timestamp
+        'approved': false,
       });
 
       // Show a success message

@@ -777,6 +777,7 @@ class _ThelaRegiState extends State<ThelaRegi> {
           'representativeName': repNameController.text,
           'representativePhone': repPhoneController.text,
           'timestamp': FieldValue.serverTimestamp(),
+          'approved': false,
         });
 
         if (mounted) {

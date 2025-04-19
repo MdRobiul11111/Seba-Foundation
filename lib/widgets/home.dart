@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:seba_app1/application/app/notice_provider.dart';
 import 'package:seba_app1/widgets/profile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,14 +23,14 @@ import '../page/regi_ambulance.dart';
 import '../page/search_ambu.dart';
 import 'donate.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatefulHookConsumerWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  ConsumerState<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends ConsumerState<Home> {
   int _currentBannerPage = 0;
   final PageController _pageController = PageController();
 
@@ -588,84 +590,57 @@ class _HomeState extends State<Home> {
       );
     } else {
       // Default fallback items
-      return CarouselSlider(
-        options: CarouselOptions(
-          height: 320.h,
-          autoPlay: true,
-          autoPlayCurve: Curves.fastOutSlowIn,
-          enableInfiniteScroll: true,
-          autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-          viewportFraction: 0.8,
-        ),
-        items: [
-          "Item 1",
-          "Item 2",
-          "Item 3",
-          "Item 4",
-          "Item 5",
-        ].map((item) {
-          return Builder(
-            builder: (BuildContext context) {
-              return GestureDetector(
-                onTap: () => _checkLoginAndNavigate(() {}),
-                child: Card(
-                  elevation: 5,
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    onTap: () => _checkLoginAndNavigate(() {}),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 300.h,
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "images/notice.png",
-                            width: 160.sp,
-                            height: 60,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _showImageDialog(context, "");
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 15.w),
-                              child: Image.asset("images/sampleim.png"),
+      final noticeList = ref.watch(noticeListProvider);
+      return noticeList.maybeWhen(
+        data: (data) => CarouselSlider(
+          options: CarouselOptions(
+            autoPlay: true,
+            autoPlayCurve: Curves.fastOutSlowIn,
+            enableInfiniteScroll: true,
+            autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+            viewportFraction: 0.8,
+          ),
+          items: data.map((item) {
+            return Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () => _checkLoginAndNavigate(() {}),
+                  child: Card(
+                    elevation: 5,
+                    clipBehavior: Clip.hardEdge,
+                    child: InkWell(
+                      onTap: () => _checkLoginAndNavigate(() {}),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              "images/notice.png",
+                              width: 160.sp,
+                              height: 60,
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.0.w, top: 8.h),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "আমরা তরুণ, আমরা অদম্য,\n\nমানবিক পৃথিবী আমাদের প্রতিজ্ঞা",
-                                    style: TextStyle(
-                                      height: 0.9.sp,
-                                      fontFamily: "Noto Sans Bengali",
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () => _openLink(context),
-                                  icon: ImageIcon(
-                                    const AssetImage("images/button.png"),
-                                    color: const Color(0xff008000),
-                                    size: 47.sp,
-                                  ),
-                                ),
-                              ],
+                            GestureDetector(
+                              onTap: () {
+                                _showImageDialog(context, "");
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 15.w),
+                                child: Image.network(item.imgae),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        }).toList(),
+                );
+              },
+            );
+          }).toList(),
+        ),
+        orElse: () => Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
   }

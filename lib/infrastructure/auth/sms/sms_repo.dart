@@ -22,11 +22,11 @@ class SmsRepo extends ISmsRepo {
       final smsModel = SmsModel(
           contacts: '88$phone',
           acode: ApiPath.smsAcode,
-          senderId: '8809610935222',
+          senderId: ApiPath.smsSenderId,
           apiKey: ApiPath.smsApiKey,
           type: ApiPath.smsType,
           msg:
-              'YourAppName: Your OTP is $otp. It is valid for 2 minutes. Do not share this code with anyone.',
+              'Seba Foundation: Your OTP is $otp. It is valid for 2 minutes. Do not share this code with anyone.',
           transactionType: 'T',
           contentID: '');
       await smsDio.post(

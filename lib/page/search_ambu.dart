@@ -742,7 +742,7 @@ class _SearchAmbuState extends State<SearchAmbu> {
 
   Future<void> fetchAmbulances() async {
     QuerySnapshot snapshot =
-        await _firestore.collection('AmbulanceDatabase').get();
+        await _firestore.collection('AmbulanceDatabase_temp').get();
     setState(() {
       items = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
@@ -751,7 +751,9 @@ class _SearchAmbuState extends State<SearchAmbu> {
   }
 
   Future<void> filterAmbulances() async {
-    Query query = _firestore.collection('AmbulanceDatabase');
+    Query query = _firestore
+        .collection('AmbulanceDatabase_temp')
+        .where('approved', isEqualTo: true);
 
     if (selectedDivision != null) {
       query = query.where('division', isEqualTo: selectedDivision);
