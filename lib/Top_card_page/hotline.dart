@@ -150,64 +150,15 @@ class _HotlineState extends State<Hotline> {
     try {
       // Fetch the document from Firestore
       final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc(documents)
+          .collection("hotlines")
+          .doc("hotline")
           .get();
 
       // Check if the document exists and contains data
       if (snapshot.exists && snapshot.data() != null) {
         // Safely extract the link using null-aware operator
-        final String? link = snapshot.get("link");
-
-        // Validate the link
-        if (link != null && link.isNotEmpty) {
-          try {
-            // Use method channel to open link in native browser
-            final bool? result = await platform.invokeMethod('openLink', link);
-
-            if (result != true) {
-              if (context.mounted) {
-                _sh22owErrorSnackBar(context, "Could not launch the link");
-              }
-            }
-          } on PlatformException catch (e) {
-            // Handle platform-specific errors
-            if (context.mounted) {
-              _sh22owErrorSnackBar(context, "Error opening link: ${e.message}");
-            }
-          }
-        } else {
-          if (context.mounted) {
-            _sh22owErrorSnackBar(context, "No link available");
-          }
-        }
-      } else {
-        if (context.mounted) {
-          _sh22owErrorSnackBar(context, "No link found in database");
-        }
-      }
-    } catch (e) {
-      // Handle any unexpected errors
-      if (context.mounted) {
-        _sh22owErrorSnackBar(
-            context, "An error occurred while fetching the link");
-      }
-    }
-  }
-
-  static Future<void> _checkLoginAndNavigat81e(BuildContext context) async {
-    try {
-      // Fetch the document from Firestore
-      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc("sliders")
-          .get();
-
-      // Check if the document exists and contains data
-      if (snapshot.exists && snapshot.data() != null) {
-        // Safely extract the link using null-aware operator
-        final String? link = snapshot.get("link");
-
+        final String? link = snapshot.get(documents);
+        Logger().f(link);
         // Validate the link
         if (link != null && link.isNotEmpty) {
           try {
@@ -268,14 +219,14 @@ class _HotlineState extends State<Hotline> {
     try {
       // Fetch the document from Firestore
       final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc("phone")
+          .collection("hotlines")
+          .doc("hotline")
           .get();
 
       // Check if the document exists and contains data
       if (snapshot.exists && snapshot.data() != null) {
         // Safely extract the phone number
-        final String? number = snapshot.get("number");
+        final String? number = snapshot.get("phoneNumber");
 
         // Update state if number is found
         if (number != null && number.isNotEmpty) {
@@ -301,21 +252,21 @@ class _HotlineState extends State<Hotline> {
     try {
       // Fetch the document from Firestore
       final DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection("Links")
-          .doc("location")
+          .collection("hotlines")
+          .doc("hotline")
           .get();
 
       // Check if the document exists and contains data
       if (snapshot.exists && snapshot.data() != null) {
         // Safely extract the location and maps link
-        final String? locationText = snapshot.get("text");
-        final String? mapUrl = snapshot.get("mapsLink");
+        final String? locationText = snapshot.get("location");
+        // final String? mapUrl = snapshot.get("mapsLink");
 
         // Update state if location is found
         if (locationText != null && locationText.isNotEmpty) {
           setState(() {
             _location = locationText;
-            _mapsLink = mapUrl ?? "";
+            // _mapsLink = mapUrl ?? "";
           });
         }
       }
@@ -402,7 +353,8 @@ class _HotlineState extends State<Hotline> {
                     lottieAsset: "images/web.json",
                     width: 50.w,
                     height: 50.w,
-                    onTap: () => _checkLoginAndNavigat8e(context, "websiteUrl"),
+                    onTap: () =>
+                        _checkLoginAndNavigat8e(context, "websiteLink"),
                   ),
 
                   // Facebook Icon
@@ -410,7 +362,8 @@ class _HotlineState extends State<Hotline> {
                     lottieAsset: "images/fb.json",
                     width: 40.w,
                     height: 40.w,
-                    onTap: () => _checkLoginAndNavigat8e(context, "faceeUrl"),
+                    onTap: () =>
+                        _checkLoginAndNavigat8e(context, "facebookLink"),
                   ),
 
                   // YouTube Icon
@@ -418,7 +371,8 @@ class _HotlineState extends State<Hotline> {
                     lottieAsset: "images/uTube.json",
                     width: 60.w,
                     height: 60.w,
-                    onTap: () => _checkLoginAndNavigat8e(context, "uTubeUrl"),
+                    onTap: () =>
+                        _checkLoginAndNavigat8e(context, "youtubeLink"),
                   ),
 
                   // Instagram Icon
@@ -426,7 +380,8 @@ class _HotlineState extends State<Hotline> {
                     lottieAsset: "images/insta.json",
                     width: 35.w,
                     height: 35.w,
-                    onTap: () => _checkLoginAndNavigat8e(context, "instaUrl"),
+                    onTap: () =>
+                        _checkLoginAndNavigat8e(context, "instagramLink"),
                   ),
 
                   // Twitter Icon
@@ -434,7 +389,8 @@ class _HotlineState extends State<Hotline> {
                     lottieAsset: "images/twi.json",
                     width: 60.w,
                     height: 60.w,
-                    onTap: () => _checkLoginAndNavigat8e(context, "twiUrl"),
+                    onTap: () =>
+                        _checkLoginAndNavigat8e(context, "twitterLink"),
                   ),
                 ],
               ),

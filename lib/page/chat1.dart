@@ -198,7 +198,13 @@ class _Chat1State extends State<Chat1> {
     try {
       // Message data to be stored
       String messageId = _generateUuid();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('UserRegress')
+          .doc(currentUserEmail)
+          .get();
+      Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
       Map<String, dynamic> messageData = {
+        "userName": data['name'] ?? '',
         "type": type,
         "content": message,
         "senderId": currentUserEmail,
