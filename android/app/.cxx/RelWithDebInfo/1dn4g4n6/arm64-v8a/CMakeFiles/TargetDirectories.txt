@@ -1,0 +1,2 @@
+E:/Flutter/new_parttime/Seba-Foundation/android/app/.cxx/RelWithDebInfo/1dn4g4n6/arm64-v8a/CMakeFiles/edit_cache.dir
+E:/Flutter/new_parttime/Seba-Foundation/android/app/.cxx/RelWithDebInfo/1dn4g4n6/arm64-v8a/CMakeFiles/rebuild_cache.dir
