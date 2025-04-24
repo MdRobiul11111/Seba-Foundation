@@ -741,8 +741,10 @@ class _SearchAmbuState extends State<SearchAmbu> {
   }
 
   Future<void> fetchAmbulances() async {
-    QuerySnapshot snapshot =
-        await _firestore.collection('AmbulanceDatabase_temp').get();
+    QuerySnapshot snapshot = await _firestore
+        .collection('AmbulanceDatabase_temp')
+        .where('approved', isEqualTo: true)
+        .get();
     setState(() {
       items = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
@@ -878,69 +880,71 @@ class _SearchAmbuState extends State<SearchAmbu> {
                 },
               ),
               SizedBox(height: 15.h),
-              SizedBox(
-                height: 1500.h,
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    return Card(
-                      color: Color(0xffF1F1F1),
-                      margin: EdgeInsets.symmetric(vertical: 4.h),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+              ListView.builder(
+                itemCount: items.length,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Card(
+                    color: Color(0xffF1F1F1),
+                    margin: EdgeInsets.symmetric(vertical: 4.h),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20.h),
+                          Row(
+                            children: [
+                              Image.asset("images/logo.png",
+                                  width: 80.w, height: 80.w),
+                              Spacer(),
+                              Image.asset("images/car.png",
+                                  width: 100.w, height: 90.w),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
+                          buildInfoRow("Name:", item['name'] ?? 'N/A'),
+                          SizedBox(height: 10.h),
+                          buildInfoRow("License:", item['license'] ?? 'N/A'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text("Number:"),
+                              Spacer(),
+                              InkWell(
+                                  onTap: () async {
+                                    final Uri url = Uri(
+                                        scheme: 'tel',
+                                        path: item['phone'] ?? 'N/A');
+                                    if (await canLaunchUrl(url)) {
+                                      await launchUrl(url);
+                                    } else {
+                                      Logger().e('cannot launch this url');
+                                    }
+                                  },
+                                  child: Text(item['phone'] ?? 'N/A')),
+                              Lottie.asset("images/call.json",
+                                  width: 40.w, height: 40.w)
+                            ],
+                          ),
+                          buildInfoRow(
+                              "Vehicle Number:", item['vehicle'] ?? 'N/A'),
+                          SizedBox(height: 10.h),
+                          buildInfoRow(
+                              "Local Address:", item['address'] ?? 'N/A'),
+                          SizedBox(height: 30.h),
+                        ],
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15.0.w),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 20.h),
-                            Row(
-                              children: [
-                                Image.asset("images/logo.png",
-                                    width: 80.w, height: 80.w),
-                                Spacer(),
-                                Image.asset("images/car.png",
-                                    width: 100.w, height: 90.w),
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-                            buildInfoRow("Name:", item['name'] ?? 'N/A'),
-                            buildInfoRow("License:", item['license'] ?? 'N/A'),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text("Number:"),
-                                Spacer(),
-                                InkWell(
-                                    onTap: () async {
-                                      final Uri url = Uri(
-                                          scheme: 'tel',
-                                          path: item['phone'] ?? 'N/A');
-                                      if (await canLaunchUrl(url)) {
-                                        await launchUrl(url);
-                                      } else {
-                                        Logger().e('cannot launch this url');
-                                      }
-                                    },
-                                    child: Text(item['phone'] ?? 'N/A')),
-                                Lottie.asset("images/call.json",
-                                    width: 40.w, height: 40.w)
-                              ],
-                            ),
-                            buildInfoRow(
-                                "Division:", item['division'] ?? 'N/A'),
-                            buildInfoRow(
-                                "Local Address:", item['address'] ?? 'N/A'),
-                            SizedBox(height: 30.h),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              )
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
@@ -952,7 +956,19 @@ class _SearchAmbuState extends State<SearchAmbu> {
     return Padding(
       padding: EdgeInsets.only(right: 10.0.w),
       child: Row(
-        children: [Text(label), Spacer(), Text(value)],
+        children: [
+          Text(label),
+          Spacer(),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: 240.w,
+            ),
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+            ),
+          )
+        ],
       ),
     );
   }
