@@ -420,7 +420,7 @@ class _HomeState extends ConsumerState<Home> {
       ),
       error: (e, s) => CarouselSlider(
         options: CarouselOptions(
-          height: 140.h,
+          height: 190.h,
           autoPlay: true,
           autoPlayCurve: Curves.fastOutSlowIn,
           enableInfiniteScroll: true,
@@ -608,6 +608,202 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 40.h,
+          backgroundColor: Color(0xff008000),
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: PopupMenuButton<int>(
+            onSelected: (selected) {
+              if (selected == 6) {
+                // Navigate to settings
+              }
+            },
+            icon: ImageIcon(
+              const AssetImage("images/drawer.png"),
+              size: 25.r,
+              color: Colors.white,
+            ),
+            elevation: 2,
+            iconSize: 28.sp,
+            color: Colors.white,
+            itemBuilder: (context) => <PopupMenuEntry<int>>[
+              PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  children: [
+                    const Icon(Icons.home_outlined),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Home",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                onTap: () {
+                  _checkLoginAndNavigate(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Donate()),
+                    );
+                  });
+                },
+                value: 2,
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      AssetImage("images/donet.png"),
+                      size: 20.r,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Donate",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                onTap: () {
+                  _checkLoginAndNavigate(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Chat1()),
+                    );
+                  });
+                },
+                value: 3,
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      AssetImage("images/chat.png"),
+                      size: 20.r,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Chat",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                onTap: () {
+                  _checkLoginAndNavigate(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Promotion()),
+                    );
+                  });
+                },
+                value: 4,
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      AssetImage("images/promotion.png"),
+                      size: 20.r,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Promotion",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                onTap: () {
+                  _checkLoginAndNavigate(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Profile()),
+                    );
+                  });
+                },
+                value: 5,
+                child: Row(
+                  children: [
+                    ImageIcon(
+                      AssetImage("images/profile.png"),
+                      size: 20.r,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Profile",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // const PopupMenuDivider(),
+              // PopupMenuItem<int>(
+              //   onTap: () {
+              //     _checkLoginAndNavigat8e(context);
+              //   },
+              //   value: 6,
+              //   child: Row(
+              //     children: [
+              //       const Icon(Icons.info_outline),
+              //       SizedBox(width: 8.w),
+              //       Text(
+              //         "About Us",
+              //         style: TextStyle(
+              //           fontSize: 14,
+              //           fontWeight: FontWeight.w500,
+              //           fontFamily: 'Roboto',
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                onTap: _handleLogout,
+                value: 7,
+                child: Row(
+                  children: [
+                    const Icon(Icons.logout),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "Logout",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -615,218 +811,9 @@ class _HomeState extends ConsumerState<Home> {
               Container(
                 decoration: BoxDecoration(
                   color: Color(0xff008000),
-                  image: DecorationImage(
-                    image: AssetImage("images/bg2.png"),
-                    fit: BoxFit.cover,
-                  ),
                 ),
                 width: double.infinity,
-                height: 230.h,
-                child: Column(
-                  children: [
-                    // Popup Menu Button
-                    Container(
-                      alignment: Alignment.topLeft,
-                      child: PopupMenuButton<int>(
-                        onSelected: (selected) {
-                          if (selected == 6) {
-                            // Navigate to settings
-                          }
-                        },
-                        icon: ImageIcon(
-                          const AssetImage("images/drawer.png"),
-                          size: 25.r,
-                          color: Colors.white,
-                        ),
-                        elevation: 2,
-                        iconSize: 28,
-                        color: Colors.white,
-                        itemBuilder: (context) => <PopupMenuEntry<int>>[
-                          PopupMenuItem<int>(
-                            value: 1,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.home_outlined),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Home",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: () {
-                              _checkLoginAndNavigate(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Donate()),
-                                );
-                              });
-                            },
-                            value: 2,
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage("images/donet.png"),
-                                  size: 20.r,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Donate",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: () {
-                              _checkLoginAndNavigate(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Chat1()),
-                                );
-                              });
-                            },
-                            value: 3,
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage("images/chat.png"),
-                                  size: 20.r,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Chat",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: () {
-                              _checkLoginAndNavigate(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Promotion()),
-                                );
-                              });
-                            },
-                            value: 4,
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage("images/promotion.png"),
-                                  size: 20.r,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Promotion",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: () {
-                              _checkLoginAndNavigate(() {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Profile()),
-                                );
-                              });
-                            },
-                            value: 5,
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage("images/profile.png"),
-                                  size: 20.r,
-                                ),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Profile",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // const PopupMenuDivider(),
-                          // PopupMenuItem<int>(
-                          //   onTap: () {
-                          //     _checkLoginAndNavigat8e(context);
-                          //   },
-                          //   value: 6,
-                          //   child: Row(
-                          //     children: [
-                          //       const Icon(Icons.info_outline),
-                          //       SizedBox(width: 8.w),
-                          //       Text(
-                          //         "About Us",
-                          //         style: TextStyle(
-                          //           fontSize: 14,
-                          //           fontWeight: FontWeight.w500,
-                          //           fontFamily: 'Roboto',
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: _handleLogout,
-                            value: 7,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.logout),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "Logout",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Carousel Slider with StreamBuilder
-                    buildBannerWithLoadedData(),
-                  ],
-                ),
+                child: buildBannerWithLoadedData(),
               ),
 
               // Horizontal Scroll Section
