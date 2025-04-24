@@ -1135,7 +1135,14 @@ class _BloodState extends State<Blood> {
         children: [
           Text(label),
           Spacer(),
-          Text(value),
+          Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(
+                      context,
+                    ).size.width *
+                    .6,
+              ),
+              child: Text(value)),
         ],
       ),
     );

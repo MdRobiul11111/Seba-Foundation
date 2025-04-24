@@ -23,6 +23,7 @@ class _ProfileState extends State<Profile> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
   final TextEditingController localAddressController = TextEditingController();
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -174,534 +175,564 @@ class _ProfileState extends State<Profile> {
       ]
     },
     'Chittagong': {
-      'Bandarban': [
-        'Ali Kadam',
-        'Bandarban Sadar',
-        'Lama',
-        'Naikhongchhari',
-        'Rowangchhari',
-        'Ruma',
-        'Thanchi'
-      ],
-      'Brahmanbaria': [
-        'Akhaura',
-        'Bancharampur',
-        'Brahmanbaria Sadar',
-        'Kasba',
-        'Nabinagar',
-        'Nasirnagar',
-        'Sarail',
-        'Ashuganj',
-        'Bijoynagar'
-      ],
       'Chandpur': [
-        'Chandpur Sadar',
+        'Chandpur',
+        'Hajiganj',
+        'means',
+        'means Answer',
+        'means South',
+        'Shaharasti',
+        'Kachua',
         'Faridganj',
         'Haimchar',
-        'Hajiganj',
-        'Kachua',
-        'Matlab Dakshin',
-        'Matlab Uttar',
-        'Shahrasti'
+        'Brahmanbaria Sadar',
+        'Sarail',
+        'Ashuganj',
+        'Nasirnagar',
+        'Nabinagar',
+        'Bancharampur',
+        'Kasba',
+        'Akhaura'
       ],
       'Chittagong': [
-        'Anwara',
-        'Banshkhali',
-        'Boalkhali',
-        'Chandanaish',
-        'Fatikchhari',
-        'Hathazari',
-        'Lohagara',
-        'Mirsharai',
-        'Patiya',
-        'Rangunia',
-        'Raozan',
-        'Sandwip',
-        'Satkania',
-        'Sitakunda'
+        'Kotwali, CMP',
+        'Pahartali (North Zone)',
+        'Pachlaish',
+        'Chandgaon',
+        'Khulsi',
+        'Bakulia',
+        'Bayezid Bostami',
+        'Port',
+        'Double Mooring',
+        'Halishahar',
+        'Patenga',
+        'Karnafuli',
+        'Immigration (Port)',
+        'Pahartali (Port Zone)'
       ],
       'Comilla': [
-        'Barura',
-        'Brahmanpara',
-        'Burichong',
-        'Chandina',
+        'Kotwali Comilla',
         'Chauddagram',
-        'Daudkandi',
-        'Debidwar',
+        'Debiddar',
         'Homna',
-        'Comilla Sadar',
         'Laksam',
-        'Monohorgonj',
-        'Meghna',
+        'Daudkandi',
+        'Burichang',
+        'Chandina',
+        'Barura',
         'Muradnagar',
-        'Nangalkot',
-        'Titas'
+        'Brahmanpara',
+        'Meghna',
+        'Manoharganj',
+        'Titas',
+        'Sadar South Comilla'
       ],
       'Cox\'s Bazar': [
-        'Chakaria',
-        'Cox\'s Bazar Sadar',
-        'Kutubdia',
-        'Maheshkhali',
+        'Sandeep',
+        'Cox’s Bazar',
+        'Ramu',
+        'Ukhia',
         'Ramu',
         'Teknaf',
-        'Ukhia'
+        'Chakoria',
+        'Kutubdia',
+        'Maheshkhali',
+        'Pekua'
       ],
       'Feni': [
-        'Chhagalnaiya',
-        'Daganbhuiyan',
-        'Feni Sadar',
-        'Parshuram',
+        'Feni',
         'Sonagazi',
-        'Fulgazi'
+        'Fulgazi',
+        'Parashuram',
+        'Chagalnaiya',
+        'Daganbhuiyan'
       ],
-      'Khagrachari': [
-        'Dighinala',
-        'Khagrachhari',
-        'Lakshmichhari',
-        'Mahalchhari',
-        'Manikchhari',
-        'Matiranga',
-        'Panchhari',
-        'Ramgarh'
-      ],
-      'Lakshmipur': [
-        'Lakshmipur Sadar',
-        'Raipur',
-        'Ramganj',
-        'Ramgati',
-        'Kamalnagar'
-      ],
+      'Laxmipur': ['Laxmipur', 'Raipura', 'Ramganj', 'Ramgati'],
       'Noakhali': [
+        'Sudharam, Noakhali',
         'Begumganj',
-        'Chatkhil',
-        'Companiganj',
-        'Hatiya',
         'Senbagh',
-        'Noakhali Sadar',
-        'Subarnachar',
-        'Kabirhat'
+        'Sonaimuri',
+        'Companiganj',
+        'Chatkhil',
+        'Hatia',
+        'Charjabbar'
       ],
-      'Rangamati': [
-        'Bagaichhari',
-        'Barkal',
-        'Kawkhali',
-        'Belaichhari',
-        'Kaptai',
-        'Juraichhari',
-        'Langadu',
-        'Naniyachar',
-        'Rajasthali',
-        'Rangamati Sadar'
-      ]
     },
     'Dhaka': {
-      'Dhaka': ['Dhamrai', 'Dohar', 'Keraniganj', 'Nawabganj', 'Savar'],
+      'Dhaka': [
+        'Ramna',
+        'Dhanmondi',
+        'Shahbag',
+        'New Market',
+        'Lalbagh',
+        'Kotwali',
+        'Hazaribagh',
+        'Kamrangirchar',
+        'Sutrapur',
+        'Demra',
+        'Jatrabari',
+        'Motijheel',
+        'Sabujbagh',
+        'Khilgaon',
+        'platoon',
+        'Uttara',
+        'Airport',
+        'Turag',
+        'Uttarkhan',
+        'Dakshin Khan',
+        'Gulshan',
+        'Cantonment',
+        'Badda',
+        'Khilkhet',
+        'Tejgaon',
+        'Tejgaon Shi / A',
+        'Mohammadpur',
+        'Adabar',
+        'Mirpur',
+        'Pallabi',
+        'Kafrul',
+        'Shah Ali',
+        'Savar',
+        'Dhamrai',
+        'Keraniganj',
+        'Nawabganj',
+        'Dohar',
+        'Ashulia',
+        'South Keraniganj'
+      ],
       'Faridpur': [
-        'Alfadanga',
-        'Bhanga',
-        'Boalmari',
-        'Charbhadrasan',
-        'Faridpur Sadar',
+        'Kotwali Faridpur',
         'Madhukhali',
+        'Boalmari',
+        'Alfadanga',
+        'Charbhadrasan',
         'Nagarkanda',
         'Sadarpur',
-        'Saltha'
+        'Salta',
+        'Bhanga'
       ],
       'Gazipur': [
-        'Gazipur Sadar',
+        'Joydevpur',
+        'Tongi',
         'Kaliakair',
-        'Kaliganj',
+        'Sreepur',
         'Kapasia',
-        'Sreepur'
+        'Kaliganj'
       ],
       'Gopalganj': [
-        'Gopalganj Sadar',
+        'Gopalganj',
+        'Maksudpur',
         'Kashiani',
         'Kotalipara',
-        'Muksudpur',
         'Tungipara'
       ],
       'Kishoreganj': [
-        'Austagram',
-        'Bajitpur',
-        'Bhairab',
-        'Hossainpur',
-        'Itna',
+        'Kishoreganj',
         'Karimganj',
+        'Tarail',
+        'Hossainpur',
         'Katiadi',
-        'Kishoreganj Sadar',
-        'Kuliarchar',
-        'Mithamain',
+        'Bajitpur',
+        'Kuliyarchar',
+        'Bhairab',
+        'Itna',
+        'Mithamin',
         'Nikli',
         'Pakundia',
-        'Tarail'
+        'Ashtagram'
       ],
-      'Madaripur': ['Kalkini', 'Madaripur Sadar', 'Rajoir', 'Shibchar'],
+      'Madaripur': ['Madaripur', 'Rajoir', 'Kalkini', 'Shivchar'],
       'Manikganj': [
-        'Daulatpur',
-        'Ghior',
-        'Harirampur',
         'Manikganj Sadar',
-        'Saturia',
+        'Ghior',
         'Shibalaya',
+        'Daulatpur',
+        'Harirampur',
+        'Saturia',
         'Singair'
       ],
       'Munshiganj': [
-        'Gazaria',
-        'Lohajang',
-        'Munshiganj Sadar',
+        'Munshiganj',
+        'Tongibari',
+        'Louhjong',
+        'Srinagar',
         'Sirajdikhan',
-        'Sreenagar',
-        'Tongibari'
+        'Gazaria'
       ],
       'Narayanganj': [
+        'Narayanganj',
+        'Fatullah',
+        'Port',
+        'Siddirganj',
         'Araihazar',
-        'Bandar',
-        'Narayanganj Sadar',
+        'Sonargaon',
         'Rupganj',
-        'Sonargaon'
       ],
       'Narsingdi': [
+        'Narsingdi',
+        'Raipur',
+        'Shibpur',
         'Belabo',
-        'Monohardi',
-        'Narsingdi Sadar',
-        'Palash',
-        'Raipura',
-        'Shibpur'
+        'Manohardi',
+        'Palash'
       ],
-      'Rajbari': ['Baliakandi', 'Goalandaghat', 'Pangsha', 'Rajbari Sadar'],
-      'Shariatpur': [
-        'Bhedarganj',
-        'Damudya',
+      'Rajbari': [
+        'Rajbari',
+        'Baliakandi',
+        'Pangsha',
+        'Goalanda',
         'Gosairhat',
+        'Vederganj',
+        'Damudda',
+        'Jajira',
         'Naria',
-        'Shariatpur Sadar',
-        'Zajira'
+        'Palang',
+        'Shakhipur',
       ],
       'Tangail': [
-        'Basail',
-        'Bhuapur',
-        'Delduar',
-        'Dhanbari',
-        'Ghatail',
-        'Gopalpur',
-        'Kalihati',
-        'Madhupur',
+        'Tangail',
         'Mirzapur',
         'Nagarpur',
         'Sakhipur',
-        'Tangail Sadar'
+        'Basail',
+        'Delduar',
+        'Madhupur',
+        'Ghatail',
+        'Kalihati',
+        'Bhuapur',
+        'Jamuna Bridge East',
+        'Dhanbari',
+        'Gopalpur'
       ]
     },
     'Khulna': {
       'Bagerhat': [
-        'Bagerhat Sadar',
-        'Chitalmari',
+        'Bagerhat',
         'Fakirhat',
+        'Mollarhat',
+        'Chitalmari',
         'Kachua',
-        'Mollahat',
         'Mongla',
-        'Morrelganj',
-        'Rampal',
-        'Sarankhola'
+        'Moralganj',
+        'Sharankhola',
+        'Rampal'
       ],
-      'Chuadanga': ['Alamdanga', 'Chuadanga Sadar', 'Damurhuda', 'Jibannagar'],
+      'Chuadanga': [
+        'Chuadanga',
+        'Alamdanga',
+        'Jivannagar',
+        'Damurhuda',
+        'Meherpur',
+        'Gangni',
+        'Mujibnagar'
+      ],
       'Jessore': [
-        'Abhaynagar',
-        'Bagherpara',
-        'Chaugachha',
+        'Kotwali Jessore',
         'Jhikargachha',
+        'Sharsha',
+        'Chougachha',
+        'Monirampur',
         'Keshabpur',
-        'Jessore Sadar',
-        'Manirampur',
-        'Sharsha'
-      ],
-      'Jhenaidah': [
-        'Harinakunda',
-        'Jhenaidah Sadar',
-        'Kaliganj',
-        'Kotchandpur',
-        'Maheshpur',
-        'Shailkupa'
+        'Abhaynagar',
+        'Bagharpara',
+        'Benapole Port ',
+        'Benapole Check Post'
       ],
       'Khulna': [
-        'Batiaghata',
-        'Dacope',
-        'Dumuria',
+        'Khulna',
+        'Sonadanga',
+        'Khalishpur',
+        'Daulatpur',
+        'Khanjahan Ali',
+        'Fultala',
         'Dighalia',
-        'Koyra',
         'Paikgachha',
-        'Phultala',
+        'Batiaghata',
+        'Dumuria',
+        'Terkhada',
         'Rupsa',
-        'Terokhada'
+        'Dakop',
+        'Koira'
       ],
       'Kushtia': [
-        'Bheramara',
-        'Daulatpur',
+        'Kushtia',
         'Khoksa',
         'Kumarkhali',
-        'Kushtia Sadar',
-        'Mirpur'
+        'Bheramara',
+        'Daulatpur',
+        'Mirpur',
+        'Islamic University'
       ],
-      'Magura': ['Magura Sadar', 'Mohammadpur', 'Shalikha', 'Sreepur'],
-      'Meherpur': ['Gangni', 'Meherpur Sadar', 'Mujibnagar'],
-      'Narail': ['Kalia', 'Lohagara', 'Narail Sadar'],
-      'Satkhira': [
-        'Assasuni',
-        'Debhata',
-        'Kalaroa',
+      'Magura': [
+        'Magura',
+        'Shalikha',
+        'Sreepur',
+        'Mohammadpur',
+        'Jhenaidah',
         'Kaliganj',
-        'Satkhira Sadar',
-        'Shyamnagar',
-        'Tala'
+        'Shailkupa',
+        'Harinakundu',
+        'Kotchadpur',
+        'Maheshpur'
+      ],
+      'Narail': ['Narail', 'Kalia', 'Lohagarh', 'Naragati'],
+      'Satkhira': [
+        'Satkhira',
+        'Kalaroa',
+        'l k',
+        'Kaliganj',
+        'Debhata',
+        'Asashuni',
+        'Patkelghata'
       ]
     },
     'Mymensingh': {
       'Jamalpur': [
-        'Bakshiganj',
+        'Jamalpur',
+        'Melandah',
+        'Sarishabar',
         'Dewanganj',
         'Islampur',
-        'Jamalpur Sadar',
         'Madarganj',
-        'Melandaha',
-        'Sarishabari'
+        'Bakshiganj',
+        'Bahadurabad'
       ],
       'Mymensingh': [
-        'Bhaluka',
-        'Dhobaura',
-        'Fulbaria',
-        'Gaffargaon',
-        'Gauripur',
-        'Haluaghat',
-        'Ishwarganj',
-        'Mymensingh Sadar',
+        'Kotwali Mymensingh',
         'Muktagachha',
+        'Phulbari',
+        'Trishal',
+        'Gauripur',
+        'Ishwarganj',
         'Nandail',
         'Phulpur',
-        'Trishal'
+        'Haluaghat',
+        'Dhobaura',
+        'Gafargaon',
+        'Bhaluka',
+        'Tarakanda'
       ],
-      'Netrokona': [
-        'Atpara',
+      'Netrokon': [
+        'Netrokona',
         'Barhatta',
+        'Kalmakanda',
         'Durgapur',
-        'Khaliajuri',
+        'Purbadhala',
         'Kendua',
         'Madan',
         'Mohanganj',
-        'Netrokona Sadar',
-        'Purbadhala'
+        'Khalijuri',
+        'Sherpur'
       ],
-      'Sherpur': [
-        'Jhenaigati',
-        'Nakla',
-        'Nalitabari',
-        'Sherpur Sadar',
-        'Sreebardi'
-      ]
+      'Sherpur': ['Nakla', 'Nalitabari', 'Srivardi', 'Jhenaigati']
     },
     'Rajshahi': {
       'Bogra': [
-        'Adamdighi',
-        'Bogra Sadar',
-        'Dhunat',
-        'Dhupchanchia',
-        'Gabtali',
-        'Kahaloo',
-        'Nandigram',
-        'Sariakandi',
-        'Sherpur',
+        'Bogra',
         'Shibganj',
-        'Sonatala'
+        'Sonatala',
+        'Gabtali',
+        'Sariakandi',
+        'Adamdighi',
+        'Dhupchachia',
+        'Kahalu',
+        'Sherpu',
+        'Dhunat',
+        'Nandigram',
+        'Shahjahanpur'
       ],
       'Chapai Nawabganj': [
-        'Bholahat',
-        'Gomastapur',
-        'Nachole',
-        'Chapai Nawabganj Sadar',
-        'Shibganj'
+        'Chapai Nawabganj',
+        'Shibganj',
+        'Gomstapur',
+        'Nachol',
+        'Bholahat'
       ],
-      'Joypurhat': [
-        'Akkelpur',
-        'Joypurhat Sadar',
-        'Kalai',
-        'Khetlal',
-        'Panchbibi'
-      ],
+      'Joypurhat': ['Joypurhat', 'Kalai', 'Khetlal', 'Akkelpur', 'Pachbibi'],
       'Naogaon': [
+        'Naogaon',
+        'Rayanagar',
         'Atrai',
-        'Badalgachhi',
-        'Dhamoirhat',
-        'Manda',
-        'Mohadevpur',
-        'Naogaon Sadar',
-        'Niamatpur',
+        'Dhamrai',
+        'Budalgachhi',
+        'Mahadevpur',
         'Patnitala',
-        'Porsha',
-        'Raninagar',
-        'Sapahar'
+        'Niamatpur',
+        'Manda',
+        'Sapahar',
+        'Parsha'
       ],
       'Natore': [
-        'Bagatipara',
-        'Baraigram',
+        'Natore',
+        'Singra',
+        'Baghatipara',
         'Gurudaspur',
         'Lalpur',
-        'Natore Sadar',
-        'Singra'
+        'Borigram',
+        'Naldanga'
       ],
-      'Pabna': [
-        'Atgharia',
-        'Bera',
-        'Bhangura',
-        'Chatmohar',
-        'Faridpur',
+      'District': [
+        'Pabna',
         'Ishwardi',
-        'Pabna Sadar',
-        'Santhia',
-        'Sujanagar'
+        'Atgharia',
+        'Chatmohar',
+        'Bhangora',
+        'Faridpur (Pabna)',
+        'Suryanagar',
+        'Fence',
+        'Sathya',
+        'Ataikula'
       ],
       'Rajshahi': [
-        'Bagha',
-        'Bagmara',
-        'Charghat',
-        'Durgapur',
-        'Godagari',
-        'Mohonpur',
+        'Boalia',
+        'Rajapur',
+        'Motihar',
+        'Shah Makdum',
         'Paba',
+        'Gudagari',
+        'Tanar',
+        ' Mohanpur',
         'Puthia',
-        'Tanore'
+        'Bagmara',
+        'Durgapur',
+        ' Charghat',
+        'Bagha'
       ],
       'Sirajganj': [
-        'Belkuchi',
-        'Chauhali',
-        'Kamarkhanda',
-        'Kazipur',
-        'Raiganj',
+        'Sirajganj',
         'Shahjadpur',
-        'Sirajganj Sadar',
-        'Tarash',
-        'Ullahpara'
+        'Ullapara',
+        'Taras',
+        'Kazipur',
+        'Kamarkhand',
+        'Raiganj',
+        'Belkuchi',
+        'Jamuna Bridge West',
+        'Salanga',
+        'Enayetpur'
       ]
     },
     'Rangpur': {
-      'Dinajpur': [
-        'Birampur',
+      'Dinajpur District': [
+        'Kotwali Dinajpur',
+        'Chiri Port',
+        'Real',
+        'Parbatipur',
         'Birganj',
-        'Biral',
-        'Bochaganj',
-        'Chirirbandar',
-        'Phulbari',
-        'Ghoraghat',
-        'Hakimpur',
-        'Kaharole',
+        'B haganj',
+        'Kaharol',
         'Khansama',
-        'Dinajpur Sadar',
-        'Nawabganj',
-        'Parbatipur'
+        'Phulbari',
+        'Nawabganj (Dinajpur)',
+        'Ghoraghat',
+        'Hakimpur'
       ],
       'Gaibandha': [
-        'Fulchhari',
-        'Gaibandha Sadar',
-        'Gobindaganj',
-        'Palashbari',
+        'Gaibandha ',
         'Sadullapur',
-        'Saghata',
-        'Sundarganj'
+        'Sundarganj',
+        'Palashbari',
+        'Gobindganj',
+        'Satghata',
+        'Fulchhari'
       ],
       'Kurigram': [
-        'Bhurungamari',
-        'Char Rajibpur',
-        'Chilmari',
-        'Phulbari',
-        'Kurigram Sadar',
-        'Nageshwari',
+        'Kurigram',
         'Rajarhat',
+        'Phulbari',
+        'Nageshwar',
+        'Burungamari',
+        'Ulipur',
+        'Chilmari',
         'Raomari',
-        'Ulipur'
+        'Rajibpur',
+        'Dusmara',
+        'K hakata'
       ],
       'Lalmonirhat': [
+        'Lalmonirhat',
         'Aditmari',
-        'Hatibandha',
         'Kaliganj',
-        'Lalmonirhat Sadar',
+        'Hatibanda',
         'Patgram'
       ],
       'Nilphamari': [
-        'Dimla',
-        'Domar',
+        'Nilphamari',
+        'Syedpur',
         'Jaldhaka',
-        'Kishoreganj',
-        'Nilphamari Sadar',
-        'Saidpur'
+        'Kishoreganj (Nilphamari)',
+        'Domar',
+        'Dimla',
+        'Syedpur Police Outpost'
       ],
-      'Panchagarh': [
-        'Atwari',
-        'Boda',
-        'Debiganj',
-        'Panchagarh Sadar',
-        'Tetulia'
-      ],
+      'Panchagarh': ['Panchagarh', 'Boda', 'Atwari', 'Tetulia', 'Debiganj'],
       'Rangpur': [
-        'Badarganj',
-        'Gangachara',
-        'Kaunia',
-        'Rangpur Sadar',
+        'Kotwali, Rangpur',
+        'Gangachura',
+        'Bhodarganj',
+        'Taraganj',
         'Mithapukur',
         'Pirgachha',
-        'Pirganj',
-        'Taraganj'
+        'Kaunia',
+        'Pirganj'
       ],
       'Thakurgaon': [
+        'Thakurgaon',
         'Baliadangi',
-        'Haripur',
+        'Rani Sankoul',
         'Pirganj',
-        'Ranisankail',
-        'Thakurgaon Sadar'
+        'Haripur'
       ]
     },
     'Sylhet': {
       'Habiganj': [
-        'Ajmiriganj',
-        'Bahubal',
-        'Baniyachong',
-        'Chunarughat',
-        'Habiganj Sadar',
-        'Lakhai',
+        'Habiganj',
         'Madhabpur',
-        'Nabiganj'
+        'Chunarughat',
+        'Bahubal',
+        'Lakhai',
+        'Nabiganj',
+        'Baniachang',
+        'Ajmiriganj',
+        'Shayestaganj'
       ],
       'Moulvibazar': [
-        'Barlekha',
+        'Moulvibazar',
+        'Srimangal',
         'Kamalganj',
-        'Kulaura',
-        'Moulvibazar Sadar',
         'Rajnagar',
-        'Sreemangal',
-        'Juri'
+        'Kulaura',
+        'Baralekha',
+        'Jury'
       ],
       'Sunamganj': [
-        'Bishwamvarpur',
+        'Sunamganj',
         'Chhatak',
-        'Derai',
-        'Dharampasha',
-        'Dowarabazar',
         'Jagannathpur',
+        'Tahirpur',
+        'Bishwambarpur',
+        'Doarabazar',
+        'Dirai',
+        'Salna',
         'Jamalganj',
-        'Sullah',
-        'Sunamganj Sadar',
-        'Tahirpur'
+        'Dharmapasha',
+        'Madhyanagar'
       ],
       'Sylhet': [
+        'Kotwali (Sylhet)',
         'Balaganj',
-        'Beanibazar',
-        'Bishwanath',
-        'Companiganj',
-        'Fenchuganj',
-        'Golapganj',
+        'Jaintapur',
         'Gowainghat',
-        'Jaintiapur',
         'Kanaighat',
-        'Sylhet Sadar',
-        'Zakiganj'
+        'Companiganj',
+        'Zakiganj',
+        'Beanibazar',
+        'Golapganj',
+        'Bishwanath',
+        'Fenchuganj',
+        'South Surma',
+        'Osmani Nagar'
       ]
     }
   };
@@ -714,6 +745,8 @@ class _ProfileState extends State<Profile> {
     readalldata();
     _loadUserImage();
   }
+
+  Map<String, dynamic>? allData;
 
   String getCurrentDate() {
     return DateFormat('dd/MM/yy').format(DateTime.now());
@@ -737,7 +770,12 @@ class _ProfileState extends State<Profile> {
       );
     }
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+    String formattedDate = value != allData?['donationComplete'] ||
+            allData?['donationComplete'] == null
+        ? DateFormat('yyyy-MM-dd').format(now)
+        : allData?['current_date'];
+    Logger().f(formattedDate);
     // Create a model map
     Map<String, dynamic> donationData = {
       'name': nameController.text,
@@ -746,11 +784,11 @@ class _ProfileState extends State<Profile> {
       'phoneNumber': numberController.text,
       'division': selectedDivision,
       'district': selectedDistrict,
-      'thana': selectedThana,
+      'upazila': selectedThana,
       'localAddress': localAddressController.text,
       'donationComplete': value,
       'asABloodDonor': value1,
-      'age': ageDet5ected,
+      'age': ageController.text,
       'profile_image': _imagePath?.isNotEmpty == true
           ? _imageUrl
           : (_imageUrl?.isNotEmpty == true ? _imageUrl : "No image"),
@@ -837,7 +875,6 @@ class _ProfileState extends State<Profile> {
   }
 
   File? imageFile;
-  String? ageDet5ected;
   bool isUploading = false;
   Future<void> readalldata() async {
     try {
@@ -854,13 +891,14 @@ class _ProfileState extends State<Profile> {
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
         setState(() {
+          allData = data;
           nameController.text = data['name'] ?? '';
           selectedBlood = data['bloodGroup'] ?? '';
           numberController.text = data['phoneNumber'] ?? '';
           selectedDivision = data['division'] ?? '';
           selectedDistrict = data['district'] ?? '';
           selectedThana = data['upazila'] ?? '';
-          ageDet5ected = data['age'] ?? '';
+          ageController.text = data['age'] ?? '';
           localAddressController.text = data['localAddress'] ?? '';
           value = data['donationComplete'] ?? false;
           value1 = data['asABloodDonor'] ?? false;
@@ -1141,6 +1179,45 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 16.h),
 
+            // Phone Number Field
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: TextField(
+                controller: numberController,
+                enabled: _isEditable,
+                decoration: InputDecoration(
+                  border: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(width: 2.w, color: Color(0xff008000)),
+                  ),
+                  labelText: "Phone Number",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
+                  labelStyle:
+                      TextStyle(color: Color(0xff008000), fontSize: 18.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            //age
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: TextField(
+                controller: ageController,
+                enabled: _isEditable,
+                decoration: InputDecoration(
+                  border: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(width: 2.w, color: Color(0xff008000)),
+                  ),
+                  labelText: "Age",
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
+                  labelStyle:
+                      TextStyle(color: Color(0xff008000), fontSize: 18.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
             // Blood Group Dropdown
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -1381,8 +1458,8 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  _saveChanges(BuildContext context) {
-    _submitForm(context);
+  _saveChanges(BuildContext context) async {
+    await _submitForm(context);
     // Implement your save logic here
     // For example, save to Firestore, update local state, etc.
     setState(() {
@@ -1390,11 +1467,13 @@ class _ProfileState extends State<Profile> {
     });
 
     // Show a success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profile updated successfully'),
-        backgroundColor: Color(0xff008000),
-      ),
-    );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Profile updated successfully'),
+          backgroundColor: Color(0xff008000),
+        ),
+      );
+    }
   }
 }

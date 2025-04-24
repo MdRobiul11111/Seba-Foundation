@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -35,10 +36,15 @@ class Promotion extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   width: double.infinity,
-                  child: Image.network(
-                    image,
+                  child: CachedNetworkImage(
+                    imageUrl: image,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    progressIndicatorBuilder: (context, url, progress) =>
+                        Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, error, stackTrace) {
                       return const Center(child: Text('Failed to load image'));
                     },
                   ),

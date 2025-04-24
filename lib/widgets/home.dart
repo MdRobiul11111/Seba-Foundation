@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:seba_app1/application/app/notice_provider.dart';
+import 'package:seba_app1/application/app/promotion_provider.dart';
 import 'package:seba_app1/widgets/profile.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -342,122 +344,117 @@ class _HomeState extends ConsumerState<Home> {
     if (isBannerLoading) {
       return Center(child: CircularProgressIndicator());
     }
-
+    final promotionList = ref.watch(promotionListProvider);
     // Use loaded data if available, otherwise use default data
-    if (bannerData.isNotEmpty) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginSignup(),
-            ),
-          );
-        },
-        child: CarouselSlider(
-          options: CarouselOptions(
-            height: 150.h,
-            autoPlay: true,
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enableInfiniteScroll: true,
-            autoPlayAnimationDuration: const Duration(milliseconds: 1200),
-            viewportFraction: 0.8,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentBannerPage = index;
-              });
-            },
-          ),
-          items: bannerData.map((doc) {
-            final imageUrl = doc['url'] ?? '';
-            return Builder(
-              builder: (BuildContext context) {
-                return Card(
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginSignup(),
+    return promotionList.when(
+      data: (data) => Column(
+        children: [
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 190.h,
+                  autoPlay: true,
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  enableInfiniteScroll: true,
+                  autoPlayAnimationDuration: const Duration(milliseconds: 1200),
+                  viewportFraction: 0.8,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _currentBannerPage = index;
+                    });
+                  },
+                ),
+                items: data.map((doc) {
+                  final imageUrl = doc.imgae;
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Card(
+                        clipBehavior: Clip.hardEdge,
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.fill,
+                            errorWidget: (context, error, stackTrace) {
+                              return const Center(
+                                  child: Text('Failed to load image'));
+                            },
+                            progressIndicatorBuilder:
+                                (context, url, progress) => Padding(
+                              padding: const EdgeInsets.all(30),
+                              child: const Center(
+                                  child: CircularProgressIndicator()),
+                            ),
+                          ),
                         ),
                       );
                     },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                              child: Text('Failed to load image'));
-                        },
+                  );
+                }).toList(),
+              ),
+              Positioned(
+                bottom: 15.h,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(data.length, (index) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: EdgeInsets.symmetric(horizontal: 5.0.w),
+                      width: _currentBannerPage == index ? 12.w : 8.w,
+                      height: _currentBannerPage == index ? 12.w : 8.w,
+                      decoration: BoxDecoration(
+                        color: _currentBannerPage == index
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: .6),
+                        borderRadius: BorderRadius.circular(6.r),
                       ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        ),
-      );
-    } else {
-      // Fallback to local images if no Firestore data
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginSignup(),
-            ),
-          );
-        },
-        child: CarouselSlider(
-          options: CarouselOptions(
-            height: 140.h,
-            autoPlay: true,
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enableInfiniteScroll: true,
-            autoPlayAnimationDuration: const Duration(milliseconds: 1200),
-            viewportFraction: 0.8,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentBannerPage = index;
-              });
-            },
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
-          items: [
-            "Item 1",
-            "Item 2",
-            "Item 3",
-          ].map((item) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Card(
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginSignup(),
-                        ),
-                      );
-                    },
-                    child: Image.asset(
-                      "images/banner1.png",
-                      width: 320.w,
-                      height: 40.h,
-                    ),
-                  ),
-                );
-              },
-            );
-          }).toList(),
+        ],
+      ),
+      error: (e, s) => CarouselSlider(
+        options: CarouselOptions(
+          height: 140.h,
+          autoPlay: true,
+          autoPlayCurve: Curves.fastOutSlowIn,
+          enableInfiniteScroll: true,
+          autoPlayAnimationDuration: const Duration(milliseconds: 1200),
+          viewportFraction: 0.8,
+          onPageChanged: (index, reason) {
+            setState(() {
+              _currentBannerPage = index;
+            });
+          },
         ),
-      );
-    }
+        items: [
+          "Item 1",
+          "Item 2",
+          "Item 3",
+        ].map((item) {
+          return Builder(
+            builder: (BuildContext context) {
+              return Card(
+                clipBehavior: Clip.hardEdge,
+                child: Image.asset(
+                  "images/banner1.png",
+                  width: 320.w,
+                  height: 40.h,
+                ),
+              );
+            },
+          );
+        }).toList(),
+      ),
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
 // Add this function to load slider data
@@ -491,158 +488,64 @@ class _HomeState extends ConsumerState<Home> {
 
   // Improved carousel slider with Firestore data
   Widget buildSliderWithLoadedData() {
-    if (isSliderLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    // Use loaded data if available, otherwise use default data
-    if (sliderData.isNotEmpty) {
-      return CarouselSlider(
+    final noticeList = ref.watch(noticeListProvider);
+    return noticeList.maybeWhen(
+      data: (data) => CarouselSlider(
         options: CarouselOptions(
-          height: 320.h,
+          height: 300.h,
           autoPlay: true,
           autoPlayCurve: Curves.fastOutSlowIn,
           enableInfiniteScroll: true,
           autoPlayAnimationDuration: const Duration(milliseconds: 1000),
           viewportFraction: 0.8,
         ),
-        items: sliderData.map((item) {
-          // Extract data from loaded items
-          final imageUrl = item['imageUrl'] ?? '';
-          final title = item['title'] ??
-              'আমরা তরুণ, আমরা অদম্য,\n\nমানবিক পৃথিবী আমাদের প্রতিজ্ঞা';
-
+        items: data.map((item) {
           return Builder(
             builder: (BuildContext context) {
-              return GestureDetector(
-                onTap: () => _checkLoginAndNavigate(() {
-                  // Add navigation logic if needed
-                }),
-                child: Card(
-                  elevation: 5,
-                  clipBehavior: Clip.hardEdge,
-                  child: InkWell(
-                    onTap: () => _checkLoginAndNavigate(() {
-                      // Add navigation logic if needed
-                    }),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 300.h,
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "images/notice.png",
-                            width: 160.sp,
-                            height: 60,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _showImageDialog(context, imageUrl);
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 15.w),
-                              child: imageUrl.isNotEmpty
-                                  ? Image.network(
-                                      imageUrl,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                            "images/sampleim.png");
-                                      },
-                                    )
-                                  : Image.asset("images/sampleim.png"),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.0.w, top: 8.h),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    title,
-                                    style: TextStyle(
-                                      height: 0.9.sp,
-                                      fontFamily: "Noto Sans Bengali",
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () => _openLink(context),
-                                  icon: ImageIcon(
-                                    const AssetImage("images/button.png"),
-                                    color: const Color(0xff008000),
-                                    size: 47.sp,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+              return Card(
+                elevation: 5,
+                clipBehavior: Clip.hardEdge,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "images/notice.png",
+                        width: 160.sp,
+                        height: 60,
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () {
+                          Logger().f(150.h);
+                          _showImageDialog(context, item.imgae);
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 247.h,
+                          child: CachedNetworkImage(
+                            imageUrl: item.imgae,
+                            fit: BoxFit.fill,
+                            progressIndicatorBuilder:
+                                (context, url, progress) => Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: const Center(
+                                  child: CircularProgressIndicator()),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
             },
           );
         }).toList(),
-      );
-    } else {
-      // Default fallback items
-      final noticeList = ref.watch(noticeListProvider);
-      return noticeList.maybeWhen(
-        data: (data) => CarouselSlider(
-          options: CarouselOptions(
-            autoPlay: true,
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enableInfiniteScroll: true,
-            autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-            viewportFraction: 0.8,
-          ),
-          items: data.map((item) {
-            return Builder(
-              builder: (BuildContext context) {
-                return GestureDetector(
-                  onTap: () => _checkLoginAndNavigate(() {}),
-                  child: Card(
-                    elevation: 5,
-                    clipBehavior: Clip.hardEdge,
-                    child: InkWell(
-                      onTap: () => _checkLoginAndNavigate(() {}),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "images/notice.png",
-                              width: 160.sp,
-                              height: 60,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                _showImageDialog(context, "");
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 15.w),
-                                child: Image.network(item.imgae),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        ),
-        orElse: () => Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+      ),
+      orElse: () => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
 // Add this function to your class to show the image dialog
@@ -670,10 +573,10 @@ class _HomeState extends ConsumerState<Home> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             imageUrl.isNotEmpty
-                                ? Image.network(
-                                    imageUrl,
+                                ? CachedNetworkImage(
+                                    imageUrl: imageUrl,
                                     fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
+                                    errorWidget: (context, error, stackTrace) {
                                       return Image.asset("images/sampleim.png");
                                     },
                                   )
@@ -876,27 +779,27 @@ class _HomeState extends ConsumerState<Home> {
                               ],
                             ),
                           ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<int>(
-                            onTap: () {
-                              _checkLoginAndNavigat8e(context);
-                            },
-                            value: 6,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.info_outline),
-                                SizedBox(width: 8.w),
-                                Text(
-                                  "About Us",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // const PopupMenuDivider(),
+                          // PopupMenuItem<int>(
+                          //   onTap: () {
+                          //     _checkLoginAndNavigat8e(context);
+                          //   },
+                          //   value: 6,
+                          //   child: Row(
+                          //     children: [
+                          //       const Icon(Icons.info_outline),
+                          //       SizedBox(width: 8.w),
+                          //       Text(
+                          //         "About Us",
+                          //         style: TextStyle(
+                          //           fontSize: 14,
+                          //           fontWeight: FontWeight.w500,
+                          //           fontFamily: 'Roboto',
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           const PopupMenuDivider(),
                           PopupMenuItem<int>(
                             onTap: _handleLogout,
@@ -922,26 +825,6 @@ class _HomeState extends ConsumerState<Home> {
 
                     // Carousel Slider with StreamBuilder
                     buildBannerWithLoadedData(),
-
-                    // Dots Indicator
-                    SizedBox(height: 8.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(3, (index) {
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: EdgeInsets.symmetric(horizontal: 5.0.w),
-                          width: _currentBannerPage == index ? 12.w : 8.w,
-                          height: _currentBannerPage == index ? 12.w : 8.w,
-                          decoration: BoxDecoration(
-                            color: _currentBannerPage == index
-                                ? Colors.white
-                                : Colors.white.withValues(alpha: .6),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                        );
-                      }),
-                    ),
                   ],
                 ),
               ),

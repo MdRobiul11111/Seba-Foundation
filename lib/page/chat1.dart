@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -212,6 +217,7 @@ class _Chat1State extends State<Chat1> {
         "timestamp": timestamp,
         "isAdmin": false,
         "messageId": messageId,
+        "isRead": false,
       };
 
       // Store in Indi_Chat collection for user's individual chat history
@@ -332,7 +338,9 @@ class _Chat1State extends State<Chat1> {
     }
   }
 
-  Widget _buildMessageBubble(Map<String, dynamic> message) {
+  bool loading = false;
+  Widget _buildMessageBubble(
+      Map<String, dynamic> message, BuildContext context) {
     bool isMe = !message["isAdmin"];
     print("AAAAAAAAAA$isMe");
     // Format timestamp
@@ -346,15 +354,77 @@ class _Chat1State extends State<Chat1> {
 
     Widget messageContent;
     if (message["type"] == "image") {
-      messageContent = Image.network(
-        message["content"],
-        width: 200,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(child: CircularProgressIndicator());
-        },
-        errorBuilder: (context, error, stackTrace) =>
-            Text("Unable to load image", style: TextStyle(color: Colors.red)),
+      messageContent = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isMe)
+            InkWell(
+              onTap: () async {
+                setState(() {
+                  loading = true;
+                });
+                var response = await Dio().get(message["content"],
+                    options: Options(responseType: ResponseType.bytes));
+                await ImageGallerySaverPlus.saveImage(
+                    Uint8List.fromList(response.data),
+                    quality: 60,
+                    name: "hello");
+                setState(() {
+                  loading = false;
+                });
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Image Downloaded successfully!'),
+                      backgroundColor: Color(0xff008000),
+                    ),
+                  );
+                }
+              },
+              child: loading
+                  ? CircularProgressIndicator()
+                  : Icon(
+                      Icons.download,
+                      color: Colors.white,
+                    ),
+            ),
+          if (isMe) SizedBox(width: 10.w),
+          Image.network(
+            message["content"],
+            width: 200,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(child: CircularProgressIndicator());
+            },
+            errorBuilder: (context, error, stackTrace) => Text(
+                "Unable to load image",
+                style: TextStyle(color: Colors.red)),
+          ),
+          if (!isMe) SizedBox(width: 10.w),
+          if (!isMe)
+            InkWell(
+              onTap: () async {
+                var response = await Dio().get(message["content"],
+                    options: Options(responseType: ResponseType.bytes));
+                await ImageGallerySaverPlus.saveImage(
+                    Uint8List.fromList(response.data),
+                    quality: 60,
+                    name: "hello");
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Image Downloaded successfully!'),
+                      backgroundColor: Color(0xff008000),
+                    ),
+                  );
+                }
+              },
+              child: Icon(
+                Icons.download,
+                color: Colors.white,
+              ),
+            ),
+        ],
       );
     } else {
       messageContent = Text(
@@ -442,7 +512,7 @@ class _Chat1State extends State<Chat1> {
                   reverse: true,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    return _buildMessageBubble(messages[index]);
+                    return _buildMessageBubble(messages[index], context);
                   },
                 );
               },
