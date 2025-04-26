@@ -755,7 +755,7 @@ class _BloodState extends State<Blood> {
           'phoneNumber': data['phoneNumber']?.toString() ?? 'N/A',
           'division': data['division'] ?? 'N/A',
           'district': data['district'] ?? 'N/A',
-          'thana': data['thana'] ?? 'N/A',
+          'thana': data['upazila'] ?? 'N/A',
           'profile_image': data['profile_image'] ?? 'N/A',
           'current_date': data['current_date'] ?? 'N/A',
           'donationComplete': data['donationComplete'] ?? 'N/A',
